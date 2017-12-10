@@ -1,3 +1,7 @@
+pub mod board;
+pub mod player;
+
+
 #[cfg(test)]
 mod tests {
     #[test]
