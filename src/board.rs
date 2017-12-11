@@ -167,7 +167,7 @@ impl Board {
         }
     }
 
-    pub fn placement(&self) -> bool {
+    pub fn is_placement(&self) -> bool {
         self.player1.pieces_left_to_place == 0 &&
         self.player2.pieces_left_to_place == 0
     }
