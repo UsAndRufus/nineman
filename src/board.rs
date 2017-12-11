@@ -42,15 +42,24 @@ impl Board {
             let sw = board.new_blank_position(format!("{}sw", layer));
             let se = board.new_blank_position(format!("{}se", layer));
 
-            let north = Position { id: format!("{}n", layer), piece: None, north: prev_north, south: None, east: Some(nw), west: Some(sw) };
-            let east  = Position { id: format!("{}e", layer), piece: None, north: Some(ne), south: Some(se), east: prev_east, west: None };
-            let south = Position { id: format!("{}s", layer), piece: None, north: None, south: prev_south, east: Some(sw), west: Some(se) };
-            let west  = Position { id: format!("{}w", layer), piece: None, north: Some(nw), south: Some(sw), east: None, west: prev_west };
+            let north = board.add_position(Position { id: format!("{}n", layer), piece: None, north: prev_north, south: None, east: Some(nw), west: Some(sw) });
+            let east  = board.add_position(Position { id: format!("{}e", layer), piece: None, north: Some(ne), south: Some(se), east: prev_east, west: None });
+            let south = board.add_position(Position { id: format!("{}s", layer), piece: None, north: None, south: prev_south, east: Some(sw), west: Some(se) });
+            let west  = board.add_position(Position { id: format!("{}w", layer), piece: None, north: Some(nw), south: Some(sw), east: None, west: prev_west });
 
-            prev_north = Some(board.add_position(north));
-            prev_east = Some(board.add_position(east));
-            prev_south = Some(board.add_position(south));
-            prev_west = Some(board.add_position(west));
+            board.positions[nw].east = Some(north);
+            board.positions[nw].south = Some(west);
+            board.positions[ne].west = Some(north);
+            board.positions[ne].south = Some(east);
+            board.positions[sw].north = Some(west);
+            board.positions[sw].east = Some(south);
+            board.positions[se].north = Some(east);
+            board.positions[se].west = Some(south);
+
+            prev_north = Some(north);
+            prev_east  = Some(east);
+            prev_south = Some(south);
+            prev_west  = Some(west);
         }
 
         return board;
