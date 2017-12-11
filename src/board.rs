@@ -39,9 +39,11 @@ impl Position {
 
 pub struct Board {
     pub positions: Vec<Position>,
+    pub ids_to_positions: HashMap<String, usize>,
     pub player1: Player,
     pub player2: Player,
-    pub ids_to_positions: HashMap<String, usize>,
+    current_player: i8,
+
 }
 
 impl Board {
@@ -49,9 +51,10 @@ impl Board {
 
         let board = Board {
             positions: Vec::new(),
+            ids_to_positions: HashMap::new(),
             player1: player1,
             player2: player2,
-            ids_to_positions: HashMap::new(),
+            current_player: 1,
         };
 
         return Board::generate_positions(board);
@@ -154,6 +157,23 @@ impl Board {
             self.get_position("0sw").piece,
             self.get_position("0s").piece,
             self.get_position("0se").piece);
+    }
+
+    pub fn current_player(&self) -> &Player {
+        match self.current_player {
+            1 => &self.player1,
+            2 => &self.player2,
+            _ => panic!("Invalid player: {}", self.current_player),
+        }
+    }
+
+    pub fn placement(&self) -> bool {
+        self.player1.pieces_left_to_place == 0 &&
+        self.player2.pieces_left_to_place == 0
+    }
+
+    pub fn make_move(&self) {
+        println!("{:?}", self.current_player().make_move());
     }
 }
 
