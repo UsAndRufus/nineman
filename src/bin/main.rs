@@ -23,4 +23,8 @@ fn main() {
     let board = Board::new(p1, p2);
 
     println!("{:?}", board);
+    println!("{:?}", board.ids_to_positions);
+    println!();
+
+    board.print();
 }

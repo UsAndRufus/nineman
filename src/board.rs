@@ -1,4 +1,5 @@
 use std::fmt;
+use std::collections::HashMap;
 
 use player::Player;
 
@@ -19,23 +20,45 @@ impl Position {
     pub fn blank(id: String) -> Position {
         return Position{ id: id, piece: 0, north: None, south: None, east: None, west: None };
     }
+
+    pub fn get_connection(&self, direction: &str) -> &str {
+        let connection = match direction {
+            "n" => self.north,
+            "e" => self.east,
+            "s" => self.south,
+            "w" => self.west,
+             _  => None,
+        };
+
+        match connection {
+            Some(_x) => "+",
+            None => ""
+        }
+    }
 }
 
 pub struct Board {
     pub positions: Vec<Position>,
     pub player1: Player,
     pub player2: Player,
+    pub ids_to_positions: HashMap<String, usize>,
 }
 
 impl Board {
     pub fn new(player1: Player, player2: Player) -> Board {
 
-        let mut board = Board {
+        let board = Board {
             positions: Vec::new(),
             player1: player1,
             player2: player2,
+            ids_to_positions: HashMap::new(),
         };
 
+        return Board::generate_positions(board);
+
+    }
+
+    fn generate_positions(mut board: Board) -> Board {
         let (mut prev_north, mut prev_south, mut prev_east, mut prev_west) = (None, None, None, None);
         for layer in 0..3 {
 
@@ -70,6 +93,8 @@ impl Board {
     fn add_position(&mut self, position: Position) -> usize {
         let next_index = self.positions.len();
 
+        self.ids_to_positions.insert(position.id.to_owned(), next_index);
+
         self.positions.push(position);
 
         return next_index;
@@ -84,6 +109,51 @@ impl Board {
             Some(p) => self.positions[p].id.to_owned(),
             None => "_".to_string(),
         }
+    }
+
+    pub fn get_position(&self, id: &str) -> &Position {
+        let index = self.ids_to_positions.get(id).unwrap().to_owned();
+        return &self.positions[index];
+    }
+
+    pub fn print(&self) {
+        println!("{}----------{}----------{}",
+            self.get_position("0nw").piece,
+            self.get_position("0n").piece,
+            self.get_position("0ne").piece);
+        println!("|          |          |");
+        println!("|   {}------{}------{}   |",
+            self.get_position("1nw").piece,
+            self.get_position("1n").piece,
+            self.get_position("1ne").piece);
+        println!("|   |      |      |   |");
+        println!("|   |   {}--{}--{}   |   |",
+            self.get_position("2nw").piece,
+            self.get_position("2n").piece,
+            self.get_position("2ne").piece);
+        println!("|   |   |     |   |   |");
+        println!("{}---{}---{}     {}---{}---{}",
+            self.get_position("0w").piece,
+            self.get_position("1w").piece,
+            self.get_position("2w").piece,
+            self.get_position("2e").piece,
+            self.get_position("1e").piece,
+            self.get_position("0e").piece);
+        println!("|   |   |     |   |   |");
+        println!("|   |   {}--{}--{}   |   |",
+            self.get_position("2sw").piece,
+            self.get_position("2s").piece,
+            self.get_position("2se").piece);
+        println!("|   |      |      |   |");
+        println!("|   {}------{}------{}   |",
+            self.get_position("1sw").piece,
+            self.get_position("1s").piece,
+            self.get_position("1se").piece);
+        println!("|          |          |");
+        println!("{}----------{}----------{}",
+            self.get_position("0sw").piece,
+            self.get_position("0s").piece,
+            self.get_position("0se").piece);
     }
 }
 
