@@ -18,12 +18,8 @@ fn main() {
         pieces_left_to_place: 9,
     };
 
-    let board = Board {
-        positions: Vec::new(),
-        players: Vec::new(),
-    };
+    let board = Board::new(p1, p2);
 
-    println!("p1 {:?}", p1);
-    println!("p2 {:?}", p2);
+    println!("players: {:?}", board.players);
     println!("{:?}", board);
 }
