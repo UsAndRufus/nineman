@@ -1,6 +1,6 @@
 pub mod board;
 pub mod player;
-
+pub mod position;
 
 #[cfg(test)]
 mod tests {

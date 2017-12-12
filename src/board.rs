@@ -2,32 +2,9 @@ use std::fmt;
 use std::collections::HashMap;
 
 use player::Player;
+use position::Position;
 
 // Idea for a list of indices borrowed from here: https://rust-leipzig.github.io/architecture/2016/12/20/idiomatic-trees-in-rust/
-
-#[derive(Debug)]
-pub struct Position {
-    // NB not using proper notation as it's a faff to work out with the way I'm generating the board
-    pub id:    String,
-    piece: i8,
-    pub north: Option<usize>,
-    pub east:  Option<usize>,
-    pub south: Option<usize>,
-    pub west:  Option<usize>,
-}
-
-impl Position {
-    pub fn blank(id: String) -> Position {
-        return Position{ id: id, piece: 0, north: None, south: None, east: None, west: None };
-    }
-
-    pub fn place(&mut self, player_id: i8) {
-        match self.piece {
-            0 => self.piece = player_id,
-            _ => panic!("Position already has piece belonging to Player {}", self.piece)
-        }
-    }
-}
 
 pub struct Board {
     pub positions: Vec<Position>,
@@ -62,10 +39,10 @@ impl Board {
             let sw = board.new_blank_position(format!("{}sw", layer));
             let se = board.new_blank_position(format!("{}se", layer));
 
-            let north = board.add_position(Position { id: format!("{}n", layer), piece: 0, north: prev_north, south: None, east: Some(nw), west: Some(sw) });
-            let east  = board.add_position(Position { id: format!("{}e", layer), piece: 0, north: Some(ne), south: Some(se), east: prev_east, west: None });
-            let south = board.add_position(Position { id: format!("{}s", layer), piece: 0, north: None, south: prev_south, east: Some(sw), west: Some(se) });
-            let west  = board.add_position(Position { id: format!("{}w", layer), piece: 0, north: Some(nw), south: Some(sw), east: None, west: prev_west });
+            let north = board.add_position(Position::new(format!("{}n", layer), prev_north, None, Some(nw), Some(sw)));
+            let east  = board.add_position(Position::new(format!("{}e", layer),Some(ne),Some(se), prev_east, None));
+            let south = board.add_position(Position::new(format!("{}s", layer), None, prev_south, Some(sw), Some(se)));
+            let west  = board.add_position(Position::new(format!("{}w", layer), Some(nw), Some(sw), None, prev_west));
 
             board.positions[nw].east = Some(north);
             board.positions[nw].south = Some(west);
@@ -118,42 +95,42 @@ impl Board {
 
     pub fn print(&self) {
         println!("{}----------{}----------{}",
-            self.get_position("0nw").piece,
-            self.get_position("0n").piece,
-            self.get_position("0ne").piece);
+            self.get_position("0nw").piece(),
+            self.get_position("0n").piece(),
+            self.get_position("0ne").piece());
         println!("|          |          |");
         println!("|   {}------{}------{}   |",
-            self.get_position("1nw").piece,
-            self.get_position("1n").piece,
-            self.get_position("1ne").piece);
+            self.get_position("1nw").piece(),
+            self.get_position("1n").piece(),
+            self.get_position("1ne").piece());
         println!("|   |      |      |   |");
         println!("|   |   {}--{}--{}   |   |",
-            self.get_position("2nw").piece,
-            self.get_position("2n").piece,
-            self.get_position("2ne").piece);
+            self.get_position("2nw").piece(),
+            self.get_position("2n").piece(),
+            self.get_position("2ne").piece());
         println!("|   |   |     |   |   |");
         println!("{}---{}---{}     {}---{}---{}",
-            self.get_position("0w").piece,
-            self.get_position("1w").piece,
-            self.get_position("2w").piece,
-            self.get_position("2e").piece,
-            self.get_position("1e").piece,
-            self.get_position("0e").piece);
+            self.get_position("0w").piece(),
+            self.get_position("1w").piece(),
+            self.get_position("2w").piece(),
+            self.get_position("2e").piece(),
+            self.get_position("1e").piece(),
+            self.get_position("0e").piece());
         println!("|   |   |     |   |   |");
         println!("|   |   {}--{}--{}   |   |",
-            self.get_position("2sw").piece,
-            self.get_position("2s").piece,
-            self.get_position("2se").piece);
+            self.get_position("2sw").piece(),
+            self.get_position("2s").piece(),
+            self.get_position("2se").piece());
         println!("|   |      |      |   |");
         println!("|   {}------{}------{}   |",
-            self.get_position("1sw").piece,
-            self.get_position("1s").piece,
-            self.get_position("1se").piece);
+            self.get_position("1sw").piece(),
+            self.get_position("1s").piece(),
+            self.get_position("1se").piece());
         println!("|          |          |");
         println!("{}----------{}----------{}",
-            self.get_position("0sw").piece,
-            self.get_position("0s").piece,
-            self.get_position("0se").piece);
+            self.get_position("0sw").piece(),
+            self.get_position("0s").piece(),
+            self.get_position("0se").piece());
     }
 
     pub fn current_player(&self) -> &Player {
