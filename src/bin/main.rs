@@ -28,9 +28,5 @@ fn main() {
 
     board.print();
 
-    println!("{:?}", board.current_player());
-    board.make_move();
-    board.print();
-    board.make_move();
-    board.print();
+    board.game_loop();
 }

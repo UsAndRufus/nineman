@@ -1,3 +1,5 @@
+use std::io;
+
 #[derive(Debug)]
 pub struct Player {
     pub name: String,
@@ -9,12 +11,24 @@ pub struct Player {
 
 impl Player {
     pub fn make_move(&self) -> (String, String) {
-        //if self.is_placement() {
-            return ("".to_string(), "0nw".to_string());
-        //}
+        self.get_move()
     }
 
     pub fn is_placement(&self) -> bool {
         self.pieces_left_to_place > 0
+    }
+
+    fn get_move(&self) -> (String, String) {
+        if self.is_placement() {
+            let mut mv = String::new();
+
+            io::stdin().read_line(&mut mv)
+                .expect("Failed to read line");
+
+            mv = mv.trim().to_string();
+            ("".to_string(), mv)
+        } else {
+            ("".to_string(), "".to_string())
+        }
     }
 }
