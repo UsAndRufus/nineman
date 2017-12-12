@@ -88,8 +88,8 @@ impl Board {
         return &self.positions[index];
     }
 
-    pub fn get_mut_position(&mut self, id: &str) -> &mut Position {
-        let index = self.ids_to_positions.get(id).unwrap().to_owned();
+    pub fn get_mut_position(&mut self, id: String) -> &mut Position {
+        let index = self.ids_to_positions.get(&id).unwrap().to_owned();
         return &mut self.positions[index];
     }
 
@@ -142,18 +142,36 @@ impl Board {
     }
 
     pub fn make_move(&mut self) {
-        let player = self.current_player();
 
-        let (from, to) = player.make_move();
+        let from;
+        let to;
+        let id;
+        {
+            let mv = self.get_move();
+            from = mv.0;
+            to   = mv.1;
+            id = self.get_current_player_id().clone();
+        }
 
-        if player.is_placement() {
-            self.place_piece(self.current_player_id, to);
+        println!("from: {}, to: {}", from, to);
+
+        if from.is_empty() {
+            self.place_piece(id, to);
         }
     }
 
-    fn place_piece(&mut self, player_id: i8, id: &str) {
-        let mut position = self.get_mut_position(id);
+    fn place_piece(&mut self, player_id: i8, id: String) {
+        let position = self.get_mut_position(id);
         position.place(player_id);
+    }
+
+    fn get_move(&self) -> (String, String) {
+        let player = self.current_player();
+        player.make_move()
+    }
+
+    fn get_current_player_id(&self) -> i8 {
+        self.current_player_id
     }
 }
 

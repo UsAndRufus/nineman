@@ -20,7 +20,7 @@ fn main() {
         pieces_left_to_place: 9,
     };
 
-    let board = Board::new(p1, p2);
+    let mut board = Board::new(p1, p2);
 
     println!("{:?}", board);
     println!("{:?}", board.ids_to_positions);
@@ -30,4 +30,5 @@ fn main() {
 
     println!("{:?}", board.current_player());
     board.make_move();
+    board.print();
 }

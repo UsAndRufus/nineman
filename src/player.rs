@@ -8,9 +8,9 @@ pub struct Player {
 }
 
 impl Player {
-    pub fn make_move(&self) -> (&str, &str) {
+    pub fn make_move(&self) -> (String, String) {
         //if self.is_placement() {
-            return ("", "0nw");
+            return ("".to_string(), "0nw".to_string());
         //}
     }
 
