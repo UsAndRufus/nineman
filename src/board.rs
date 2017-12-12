@@ -150,7 +150,7 @@ impl Board {
             let mv = self.get_move();
             from = mv.0;
             to   = mv.1;
-            id = self.get_current_player_id().clone();
+            id = self.get_current_player_id();
         }
 
         println!("from: {}, to: {}", from, to);
@@ -158,6 +158,8 @@ impl Board {
         if from.is_empty() {
             self.place_piece(id, to);
         }
+
+        self.switch_player();
     }
 
     fn place_piece(&mut self, player_id: i8, id: String) {
@@ -172,6 +174,14 @@ impl Board {
 
     fn get_current_player_id(&self) -> i8 {
         self.current_player_id
+    }
+
+    fn switch_player(&mut self) {
+        match self.current_player_id {
+            1 => self.current_player_id = 2,
+            2 => self.current_player_id = 1,
+            _ => panic!("Invalid player id: {}", self.current_player_id),
+        }
     }
 }
 
