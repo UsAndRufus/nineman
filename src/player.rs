@@ -9,6 +9,12 @@ pub struct Player {
 
 impl Player {
     pub fn make_move(&self) -> (&str, &str) {
-        ("0nw","0n")
+        //if self.is_placement() {
+            return ("", "0nw");
+        //}
+    }
+
+    pub fn is_placement(&self) -> bool {
+        self.pieces_left_to_place > 0
     }
 }

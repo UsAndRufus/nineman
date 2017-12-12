@@ -30,5 +30,4 @@ fn main() {
 
     println!("{:?}", board.current_player());
     board.make_move();
-    println!("{:?}", board.is_placement());
 }

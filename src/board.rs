@@ -9,7 +9,7 @@ use player::Player;
 pub struct Position {
     // NB not using proper notation as it's a faff to work out with the way I'm generating the board
     pub id:    String,
-    pub piece: i8,
+    piece: i8,
     pub north: Option<usize>,
     pub east:  Option<usize>,
     pub south: Option<usize>,
@@ -21,18 +21,10 @@ impl Position {
         return Position{ id: id, piece: 0, north: None, south: None, east: None, west: None };
     }
 
-    pub fn get_connection(&self, direction: &str) -> &str {
-        let connection = match direction {
-            "n" => self.north,
-            "e" => self.east,
-            "s" => self.south,
-            "w" => self.west,
-             _  => None,
-        };
-
-        match connection {
-            Some(_x) => "+",
-            None => ""
+    pub fn place(&mut self, player_id: i8) {
+        match self.piece {
+            0 => self.piece = player_id,
+            _ => panic!("Position already has piece belonging to Player {}", self.piece)
         }
     }
 }
@@ -42,7 +34,7 @@ pub struct Board {
     pub ids_to_positions: HashMap<String, usize>,
     pub player1: Player,
     pub player2: Player,
-    current_player: i8,
+    current_player_id: i8,
 
 }
 
@@ -54,7 +46,7 @@ impl Board {
             ids_to_positions: HashMap::new(),
             player1: player1,
             player2: player2,
-            current_player: 1,
+            current_player_id: 1,
         };
 
         return Board::generate_positions(board);
@@ -119,6 +111,11 @@ impl Board {
         return &self.positions[index];
     }
 
+    pub fn get_mut_position(&mut self, id: &str) -> &mut Position {
+        let index = self.ids_to_positions.get(id).unwrap().to_owned();
+        return &mut self.positions[index];
+    }
+
     pub fn print(&self) {
         println!("{}----------{}----------{}",
             self.get_position("0nw").piece,
@@ -160,20 +157,26 @@ impl Board {
     }
 
     pub fn current_player(&self) -> &Player {
-        match self.current_player {
+        match self.current_player_id {
             1 => &self.player1,
             2 => &self.player2,
-            _ => panic!("Invalid player: {}", self.current_player),
+            _ => panic!("Invalid player: {}", self.current_player_id),
         }
     }
 
-    pub fn is_placement(&self) -> bool {
-        self.player1.pieces_left_to_place == 0 &&
-        self.player2.pieces_left_to_place == 0
+    pub fn make_move(&mut self) {
+        let player = self.current_player();
+
+        let (from, to) = player.make_move();
+
+        if player.is_placement() {
+            self.place_piece(self.current_player_id, to);
+        }
     }
 
-    pub fn make_move(&self) {
-        println!("{:?}", self.current_player().make_move());
+    fn place_piece(&mut self, player_id: i8, id: &str) {
+        let mut position = self.get_mut_position(id);
+        position.place(player_id);
     }
 }
 
