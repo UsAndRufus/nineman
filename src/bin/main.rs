@@ -4,21 +4,9 @@ use nineman::board::Board;
 use nineman::player::Player;
 
 fn main() {
-    let p1 = Player {
-        name: String::from("Dave"),
-        id: 1,
-        colour: String::from("#000000"),
-        bot: false,
-        pieces_left_to_place: 9,
-    };
+    let p1 = Player::new(String::from("Dave"),   1, String::from("#000000"), false);
 
-    let p2 = Player {
-        name: String::from("Bertie"),
-        id: 2,
-        colour: String::from("#110000"),
-        bot: true,
-        pieces_left_to_place: 9,
-    };
+    let p2 = Player::new(String::from("Bertie"), 2, String::from("#110000"), true);
 
     let mut board = Board::new(p1, p2);
 

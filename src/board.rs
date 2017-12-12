@@ -132,7 +132,7 @@ impl Board {
             self.get_position("0s").piece(),
             self.get_position("0se").piece());
         println!("P1: {}; P2: {}",
-            self.player1.pieces_left_to_place, self.player2.pieces_left_to_place);
+            self.player1.get_pieces_left_to_place(), self.player2.get_pieces_left_to_place());
     }
 
     pub fn current_player(&self) -> &Player {
