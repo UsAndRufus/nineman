@@ -1,7 +1,6 @@
 use std::fmt;
 use std::collections::HashMap;
 
-use player::Player;
 use position::Position;
 
 // Idea for a list of indices borrowed from here: https://rust-leipzig.github.io/architecture/2016/12/20/idiomatic-trees-in-rust/
@@ -9,21 +8,15 @@ use position::Position;
 pub struct Board {
     pub positions: Vec<Position>,
     pub ids_to_positions: HashMap<String, usize>,
-    pub player1: Player,
-    pub player2: Player,
-    current_player_id: i8,
 
 }
 
 impl Board {
-    pub fn new(player1: Player, player2: Player) -> Board {
+    pub fn new() -> Board {
 
         let board = Board {
             positions: Vec::new(),
             ids_to_positions: HashMap::new(),
-            player1: player1,
-            player2: player2,
-            current_player_id: 1,
         };
 
         return Board::generate_positions(board);
@@ -131,66 +124,6 @@ impl Board {
             self.get_position("0sw").piece(),
             self.get_position("0s").piece(),
             self.get_position("0se").piece());
-        println!("P1: {}; P2: {}",
-            self.player1.get_pieces_left_to_place(), self.player2.get_pieces_left_to_place());
-    }
-
-    pub fn current_player(&self) -> &Player {
-        match self.current_player_id {
-            1 => &self.player1,
-            2 => &self.player2,
-            _ => panic!("Invalid player: {}", self.current_player_id),
-        }
-    }
-
-    pub fn game_loop(&mut self) {
-        loop {
-            self.make_move();
-            self.print();
-        }
-    }
-
-    pub fn make_move(&mut self) {
-
-        let from;
-        let to;
-        let id;
-        {
-            let mv = self.get_move();
-            from = mv.0;
-            to   = mv.1;
-            id = self.get_current_player_id();
-        }
-
-        println!("from: {}, to: {}", from, to);
-
-        if from.is_empty() {
-            self.place_piece(id, to);
-        }
-
-        self.switch_player();
-    }
-
-    fn place_piece(&mut self, player_id: i8, id: String) {
-        let position = self.get_mut_position(id);
-        position.place(player_id);
-    }
-
-    fn get_move(&self) -> (String, String) {
-        let player = self.current_player();
-        player.make_move()
-    }
-
-    fn get_current_player_id(&self) -> i8 {
-        self.current_player_id
-    }
-
-    fn switch_player(&mut self) {
-        match self.current_player_id {
-            1 => self.current_player_id = 2,
-            2 => self.current_player_id = 1,
-            _ => panic!("Invalid player id: {}", self.current_player_id),
-        }
     }
 }
 
