@@ -13,7 +13,5 @@ fn main() {
     println!("{:?}", game);
     println!();
 
-    game.print();
-
     game.game_loop();
 }

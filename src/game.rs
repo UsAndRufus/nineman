@@ -35,28 +35,28 @@ impl Game {
 
     pub fn game_loop(&mut self) {
         loop {
-            self.make_move();
             self.print();
+            self.make_move();
         }
     }
 
     pub fn make_move(&mut self) {
 
         let (from, to) = self.get_move();
-        let id = self.get_current_player_id();
+        let player_id = self.get_current_player_id();
 
 
         println!("from: {}, to: {}", from, to);
 
         if from.is_empty() {
-            self.place_piece(id, to);
+            self.place_piece(player_id, to);
         }
 
         self.switch_player();
     }
 
-    fn place_piece(&mut self, player_id: i8, id: String) {
-        let position = self.board.get_mut_position(id);
+    fn place_piece(&mut self, player_id: i8, piece_id: String) {
+        let position = self.board.get_mut_position(piece_id);
         position.place(player_id);
     }
 

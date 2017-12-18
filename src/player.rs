@@ -12,14 +12,17 @@ pub struct Player {
 
 impl Player {
     pub fn new(name: String, id: i8, colour: String, bot: bool) -> Player {
-        Player { name: name, id: id, colour: colour, bot: bot, pieces_left_to_place: Cell::new(9) }
+        Player { name: name, id: id, colour: colour, bot: bot, pieces_left_to_place: Cell::new(2) }
     }
 
     pub fn make_move(&self) -> (String, String) {
+        let mv = self.get_move();
+
         if self.is_placement() {
             self.pieces_left_to_place.set(self.pieces_left_to_place.get() - 1);
         }
-        self.get_move()
+
+        mv
     }
 
     pub fn is_placement(&self) -> bool {
@@ -27,15 +30,15 @@ impl Player {
     }
 
     fn get_move(&self) -> (String, String) {
+        let mut input = String::new();
+        io::stdin().read_line(&mut input)
+            .expect("Failed to read line");
+        input = input.trim().to_string();
         if self.is_placement() {
-            let mut mv = String::new();
-
-            io::stdin().read_line(&mut mv)
-                .expect("Failed to read line");
-            mv = mv.trim().to_string();
-            ("".to_string(), mv)
+            ("".to_string(), input)
         } else {
-            ("".to_string(), "".to_string())
+            let mut split = input.split(",");
+            (split.next().unwrap().to_string(), split.next().unwrap().to_string())
         }
     }
 
