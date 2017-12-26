@@ -62,7 +62,24 @@ impl Game {
 
     fn get_move(&self) -> (String, String) {
         let player = self.current_player();
-        player.make_move()
+
+        let mut mv;
+        let mut is_valid = false;
+
+        loop {
+            mv = player.make_move();
+            {
+                is_valid = self.move_valid(mv);
+            }
+            match is_valid {
+                true => return mv,
+                _ => continue,
+            }
+        }
+    }
+
+    fn move_valid(&self, (_from,_to): (String, String)) -> bool {
+        false
     }
 
     fn get_current_player_id(&self) -> i8 {
