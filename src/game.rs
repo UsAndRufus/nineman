@@ -63,23 +63,23 @@ impl Game {
     fn get_move(&self) -> (String, String) {
         let player = self.current_player();
 
-        let mut mv;
-        let mut is_valid = false;
+        let mut mv = ("".to_string(), "".to_string());
+        let mut valid = false;
 
-        loop {
+        while !valid {
+            println!("P{} to move:", self.current_player_id);
             mv = player.make_move();
-            {
-                is_valid = self.move_valid(mv);
-            }
-            match is_valid {
-                true => return mv,
-                _ => continue,
-            }
+            valid = self.move_valid(&mv);
         }
+
+        mv
     }
 
-    fn move_valid(&self, (_from,_to): (String, String)) -> bool {
-        false
+    fn move_valid(&self, mv: &(String, String)) -> bool {
+        let (ref from, ref to) = *mv;
+        self.board.is_valid_position(from) &&
+        self.board.is_valid_position(to) &&
+        self.board.is_empty_position(to)
     }
 
     fn get_current_player_id(&self) -> i8 {

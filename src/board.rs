@@ -125,6 +125,14 @@ impl Board {
             self.get_position("0s").piece(),
             self.get_position("0se").piece());
     }
+
+    pub fn is_valid_position(&self, position: &String) -> bool {
+        true
+    }
+
+    pub fn is_empty_position(&self, position: &String) -> bool {
+        false
+    }
 }
 
 impl fmt::Debug for Board {
