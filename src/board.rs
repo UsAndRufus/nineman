@@ -136,7 +136,10 @@ impl Board {
     }
 
     pub fn is_empty_position(&self, position: &String) -> bool {
-        true
+        match self.get_position(position) {
+            Some(p) => p.is_empty(),
+            None => false
+        }
     }
 }
 

@@ -29,4 +29,8 @@ impl Position {
     pub fn piece(&self) -> i8 {
         self.piece
     }
+
+    pub fn is_empty(&self) -> bool {
+        self.piece == 0
+    }
 }
