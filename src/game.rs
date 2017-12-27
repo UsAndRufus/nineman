@@ -77,7 +77,7 @@ impl Game {
 
     fn move_valid(&self, mv: &(String, String)) -> bool {
         let (ref from, ref to) = *mv;
-        self.board.is_valid_position(from) &&
+        (from == "" || self.board.is_valid_position(from)) &&
         self.board.is_valid_position(to) &&
         self.board.is_empty_position(to)
     }

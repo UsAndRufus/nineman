@@ -76,9 +76,11 @@ impl Board {
         }
     }
 
-    pub fn get_position(&self, id: &str) -> &Position {
-        let index = self.ids_to_positions.get(id).unwrap().to_owned();
-        return &self.positions[index];
+    pub fn get_position(&self, id: &str) -> Option<&Position> {
+        match self.ids_to_positions.get(id) {
+            Some(index) => Some(&self.positions[index.to_owned()]),
+            None => None
+        }
     }
 
     pub fn get_mut_position(&mut self, id: String) -> &mut Position {
@@ -88,50 +90,53 @@ impl Board {
 
     pub fn print(&self) {
         println!("{}----------{}----------{}",
-            self.get_position("0nw").piece(),
-            self.get_position("0n").piece(),
-            self.get_position("0ne").piece());
+            self.get_position("0nw").unwrap().piece(),
+            self.get_position("0n").unwrap().piece(),
+            self.get_position("0ne").unwrap().piece());
         println!("|          |          |");
         println!("|   {}------{}------{}   |",
-            self.get_position("1nw").piece(),
-            self.get_position("1n").piece(),
-            self.get_position("1ne").piece());
+            self.get_position("1nw").unwrap().piece(),
+            self.get_position("1n").unwrap().piece(),
+            self.get_position("1ne").unwrap().piece());
         println!("|   |      |      |   |");
         println!("|   |   {}--{}--{}   |   |",
-            self.get_position("2nw").piece(),
-            self.get_position("2n").piece(),
-            self.get_position("2ne").piece());
+            self.get_position("2nw").unwrap().piece(),
+            self.get_position("2n").unwrap().piece(),
+            self.get_position("2ne").unwrap().piece());
         println!("|   |   |     |   |   |");
         println!("{}---{}---{}     {}---{}---{}",
-            self.get_position("0w").piece(),
-            self.get_position("1w").piece(),
-            self.get_position("2w").piece(),
-            self.get_position("2e").piece(),
-            self.get_position("1e").piece(),
-            self.get_position("0e").piece());
+            self.get_position("0w").unwrap().piece(),
+            self.get_position("1w").unwrap().piece(),
+            self.get_position("2w").unwrap().piece(),
+            self.get_position("2e").unwrap().piece(),
+            self.get_position("1e").unwrap().piece(),
+            self.get_position("0e").unwrap().piece());
         println!("|   |   |     |   |   |");
         println!("|   |   {}--{}--{}   |   |",
-            self.get_position("2sw").piece(),
-            self.get_position("2s").piece(),
-            self.get_position("2se").piece());
+            self.get_position("2sw").unwrap().piece(),
+            self.get_position("2s").unwrap().piece(),
+            self.get_position("2se").unwrap().piece());
         println!("|   |      |      |   |");
         println!("|   {}------{}------{}   |",
-            self.get_position("1sw").piece(),
-            self.get_position("1s").piece(),
-            self.get_position("1se").piece());
+            self.get_position("1sw").unwrap().piece(),
+            self.get_position("1s").unwrap().piece(),
+            self.get_position("1se").unwrap().piece());
         println!("|          |          |");
         println!("{}----------{}----------{}",
-            self.get_position("0sw").piece(),
-            self.get_position("0s").piece(),
-            self.get_position("0se").piece());
+            self.get_position("0sw").unwrap().piece(),
+            self.get_position("0s").unwrap().piece(),
+            self.get_position("0se").unwrap().piece());
     }
 
     pub fn is_valid_position(&self, position: &String) -> bool {
-        true
+        match self.get_position(position) {
+            Some(_p) => true,
+            None => false
+        }
     }
 
     pub fn is_empty_position(&self, position: &String) -> bool {
-        false
+        true
     }
 }
 
