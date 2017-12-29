@@ -68,12 +68,24 @@ impl Game {
         let mut valid = false;
 
         while !valid {
-            println!("P{} to move:", self.current_player_id);
+            println!("{}", self.render_current_move());
             mv = player.make_move();
             valid = self.move_valid(&mv);
         }
 
         mv
+    }
+    fn render_current_move(&self) -> String {
+        let player = self.current_player();
+
+        let mv;
+        if player.is_placement() {
+            mv = "place";
+        } else {
+            mv = "move";
+        }
+
+        format!("P{} to {}:", player.id, mv)
     }
 
     fn move_valid(&self, mv: &(String, String)) -> bool {
