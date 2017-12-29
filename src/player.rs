@@ -1,5 +1,6 @@
 use std::io;
 use std::cell::Cell;
+use itertools::Itertools;
 
 #[derive(Debug)]
 pub struct Player {
@@ -12,7 +13,7 @@ pub struct Player {
 
 impl Player {
     pub fn new(name: String, id: i8, colour: String, bot: bool) -> Player {
-        Player { name: name, id: id, colour: colour, bot: bot, pieces_left_to_place: Cell::new(2) }
+        Player { name: name, id: id, colour: colour, bot: bot, pieces_left_to_place: Cell::new(1) }
     }
 
     pub fn make_move(&self) -> (String, String) {
@@ -32,16 +33,23 @@ impl Player {
     }
 
     fn get_move(&self) -> (String, String) {
+        if self.is_placement() {
+            ("".to_string(), self.get_input())
+        } else {
+            loop {
+                match self.get_input().split(",").map(|m| m.to_string()).next_tuple() {
+                    Some(mv) => break mv,
+                    None => println!("Invalid move, must be in format 0n,0e"),
+                }
+            }
+        }
+    }
+
+    fn get_input(&self) -> String {
         let mut input = String::new();
         io::stdin().read_line(&mut input)
             .expect("Failed to read line");
-        input = input.trim().to_string();
-        if self.is_placement() {
-            ("".to_string(), input)
-        } else {
-            let mut split = input.split(",");
-            (split.next().unwrap().to_string(), split.next().unwrap().to_string())
-        }
+        input.trim().to_string().to_lowercase()
     }
 
     pub fn get_pieces_left_to_place(&self) -> i8 {
