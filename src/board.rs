@@ -23,6 +23,7 @@ impl Board {
 
     }
 
+    // TODO: consider moving creation stuff to a BoardFactory object
     fn generate_positions(mut board: Board) -> Board {
         let (mut prev_north, mut prev_south, mut prev_east, mut prev_west) = (None, None, None, None);
         for layer in 0..3 {
@@ -69,6 +70,25 @@ impl Board {
         return self.add_position(Position::blank(id));
     }
 
+    pub fn place_piece(&mut self, player_id: i8, piece_id: String) {
+        let position = self.get_mut_position(piece_id);
+        position.place(player_id);
+    }
+
+    pub fn move_piece(&mut self, player_id: i8, from_id: String, to_id: String) {
+        let can_move;
+        {
+            let from = self.get_position(&from_id);
+            let to   = self.get_position(&to_id);
+            can_move = from.owned_by(player_id) && to.is_empty();
+        }
+
+        if can_move {
+            self.get_mut_position(from_id).remove();
+            self.get_mut_position(to_id).place(player_id);
+        }
+    }
+
     pub fn get_id(&self, position: Option<usize>) -> String {
         match position {
             Some(p) => self.positions[p].id.to_owned(),
@@ -76,11 +96,15 @@ impl Board {
         }
     }
 
-    pub fn get_position(&self, id: &str) -> Option<&Position> {
+    fn get_position_option(&self, id: &str) -> Option<&Position> {
         match self.ids_to_positions.get(id) {
             Some(index) => Some(&self.positions[index.to_owned()]),
             None => None
         }
+    }
+
+    fn get_position(&self, id: &str) -> &Position {
+        self.get_position_option(id).unwrap()
     }
 
     pub fn get_mut_position(&mut self, id: String) -> &mut Position {
@@ -90,53 +114,53 @@ impl Board {
 
     pub fn print(&self) {
         println!("{}----------{}----------{}",
-            self.get_position("0nw").unwrap().piece(),
-            self.get_position("0n").unwrap().piece(),
-            self.get_position("0ne").unwrap().piece());
+            self.get_position("0nw").piece(),
+            self.get_position("0n").piece(),
+            self.get_position("0ne").piece());
         println!("|          |          |");
         println!("|   {}------{}------{}   |",
-            self.get_position("1nw").unwrap().piece(),
-            self.get_position("1n").unwrap().piece(),
-            self.get_position("1ne").unwrap().piece());
+            self.get_position("1nw").piece(),
+            self.get_position("1n").piece(),
+            self.get_position("1ne").piece());
         println!("|   |      |      |   |");
         println!("|   |   {}--{}--{}   |   |",
-            self.get_position("2nw").unwrap().piece(),
-            self.get_position("2n").unwrap().piece(),
-            self.get_position("2ne").unwrap().piece());
+            self.get_position("2nw").piece(),
+            self.get_position("2n").piece(),
+            self.get_position("2ne").piece());
         println!("|   |   |     |   |   |");
         println!("{}---{}---{}     {}---{}---{}",
-            self.get_position("0w").unwrap().piece(),
-            self.get_position("1w").unwrap().piece(),
-            self.get_position("2w").unwrap().piece(),
-            self.get_position("2e").unwrap().piece(),
-            self.get_position("1e").unwrap().piece(),
-            self.get_position("0e").unwrap().piece());
+            self.get_position("0w").piece(),
+            self.get_position("1w").piece(),
+            self.get_position("2w").piece(),
+            self.get_position("2e").piece(),
+            self.get_position("1e").piece(),
+            self.get_position("0e").piece());
         println!("|   |   |     |   |   |");
         println!("|   |   {}--{}--{}   |   |",
-            self.get_position("2sw").unwrap().piece(),
-            self.get_position("2s").unwrap().piece(),
-            self.get_position("2se").unwrap().piece());
+            self.get_position("2sw").piece(),
+            self.get_position("2s").piece(),
+            self.get_position("2se").piece());
         println!("|   |      |      |   |");
         println!("|   {}------{}------{}   |",
-            self.get_position("1sw").unwrap().piece(),
-            self.get_position("1s").unwrap().piece(),
-            self.get_position("1se").unwrap().piece());
+            self.get_position("1sw").piece(),
+            self.get_position("1s").piece(),
+            self.get_position("1se").piece());
         println!("|          |          |");
         println!("{}----------{}----------{}",
-            self.get_position("0sw").unwrap().piece(),
-            self.get_position("0s").unwrap().piece(),
-            self.get_position("0se").unwrap().piece());
+            self.get_position("0sw").piece(),
+            self.get_position("0s").piece(),
+            self.get_position("0se").piece());
     }
 
     pub fn is_valid_position(&self, position: &String) -> bool {
-        match self.get_position(position) {
+        match self.get_position_option(position) {
             Some(_p) => true,
             None => false
         }
     }
 
     pub fn is_empty_position(&self, position: &String) -> bool {
-        match self.get_position(position) {
+        match self.get_position_option(position) {
             Some(p) => p.is_empty(),
             None => false
         }

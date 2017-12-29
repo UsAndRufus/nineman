@@ -26,11 +26,19 @@ impl Position {
         }
     }
 
+    pub fn remove(&mut self) {
+        self.piece = 0;
+    }
+
     pub fn piece(&self) -> i8 {
         self.piece
     }
 
     pub fn is_empty(&self) -> bool {
         self.piece == 0
+    }
+
+    pub fn owned_by(&self, player_id: i8) -> bool {
+        self.piece == player_id
     }
 }

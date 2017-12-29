@@ -45,20 +45,17 @@ impl Game {
         let (from, to) = self.get_move();
         let player_id = self.get_current_player_id();
 
-
         println!("from: {}, to: {}", from, to);
 
-        if from.is_empty() {
-            self.place_piece(player_id, to);
-            self.get_current_player().place_piece();
+        if self.current_player().is_placement() {
+            if from.is_empty() {
+                self.board.place_piece(player_id, to);
+                self.get_current_player().place_piece();
+            }
+        } else {
+            self.board.move_piece(player_id, from, to);
         }
-
         self.switch_player();
-    }
-
-    fn place_piece(&mut self, player_id: i8, piece_id: String) {
-        let position = self.board.get_mut_position(piece_id);
-        position.place(player_id);
     }
 
     fn get_move(&self) -> (String, String) {
