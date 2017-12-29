@@ -7,12 +7,16 @@ pub struct Position {
     pub east:  Option<usize>,
     pub south: Option<usize>,
     pub west:  Option<usize>,
+    connections: Vec<usize>
 }
 
 impl Position {
     pub fn new(id: String, north: Option<usize>, east: Option<usize>, south: Option<usize>,
                west:  Option<usize>) -> Position {
-        return Position { id: id, piece: 0, north: north, south: south, east: east, west: west }
+        let connections = vec![north, east, south, west];
+        println!("connections: {:?}", connections);
+        return Position { id: id, piece: 0, north: north, south: south, east: east, west: west,
+            connections: connections.iter().filter(|c| c.is_some()).map(|c| c.unwrap()).collect() }
     }
 
     pub fn blank(id: String) -> Position {
@@ -40,5 +44,17 @@ impl Position {
 
     pub fn owned_by(&self, player_id: i8) -> bool {
         self.piece == player_id
+    }
+
+    pub fn connected_to(&self, other_option: Option<&usize>) -> bool {
+        if let Some(other) = other_option {
+            println!("Checking for containing");
+            println!("Contains? {}", self.connections.contains(other));
+            println!("other: {}, connections: {:?}", other, self.connections);
+            self.connections.contains(other)
+        } else {
+            println!("connected_to option empty");
+            false
+        }
     }
 }

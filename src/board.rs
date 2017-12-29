@@ -80,7 +80,7 @@ impl Board {
         {
             let from = self.get_position(&from_id);
             let to   = self.get_position(&to_id);
-            can_move = from.owned_by(player_id) && to.is_empty();
+            can_move = from.owned_by(player_id) && to.is_empty() && self.are_connected(from,to);
         }
 
         if can_move {
@@ -164,6 +164,10 @@ impl Board {
             Some(p) => p.is_empty(),
             None => false
         }
+    }
+
+    fn are_connected(&self, from: &Position, to: &Position) -> bool {
+        from.connected_to(self.ids_to_positions.get(&to.id))
     }
 }
 
