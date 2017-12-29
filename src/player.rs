@@ -18,15 +18,17 @@ impl Player {
     pub fn make_move(&self) -> (String, String) {
         let mv = self.get_move();
 
-        if self.is_placement() {
-            self.pieces_left_to_place.set(self.pieces_left_to_place.get() - 1);
-        }
-
         mv
     }
 
     pub fn is_placement(&self) -> bool {
         self.pieces_left_to_place.get() > 0
+    }
+
+    pub fn place_piece(&self) {
+        if self.is_placement() {
+            self.pieces_left_to_place.set(self.pieces_left_to_place.get() - 1);
+        }
     }
 
     fn get_move(&self) -> (String, String) {

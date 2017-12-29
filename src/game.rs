@@ -50,6 +50,7 @@ impl Game {
 
         if from.is_empty() {
             self.place_piece(player_id, to);
+            self.get_current_player().place_piece();
         }
 
         self.switch_player();
@@ -84,6 +85,14 @@ impl Game {
 
     fn get_current_player_id(&self) -> i8 {
         self.current_player_id
+    }
+
+    fn get_current_player(&self) -> &Player {
+        match self.current_player_id {
+            1 => &self.player1,
+            2 => &self.player2,
+            _ => panic!("Invalid player id: {}", self.current_player_id),
+        }
     }
 
     fn switch_player(&mut self) {
