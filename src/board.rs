@@ -38,14 +38,14 @@ impl Board {
             let south = board.add_position(Position::new(format!("{}s", layer), None, prev_south, Some(sw), Some(se)));
             let west  = board.add_position(Position::new(format!("{}w", layer), Some(nw), Some(sw), None, prev_west));
 
-            board.positions[nw].east = Some(north);
-            board.positions[nw].south = Some(west);
-            board.positions[ne].west = Some(north);
-            board.positions[ne].south = Some(east);
-            board.positions[sw].north = Some(west);
-            board.positions[sw].east = Some(south);
-            board.positions[se].north = Some(east);
-            board.positions[se].west = Some(south);
+            board.positions[nw].add_position("east",  Some(north));
+            board.positions[nw].add_position("south", Some(west));
+            board.positions[ne].add_position("west",  Some(north));
+            board.positions[ne].add_position("south", Some(east));
+            board.positions[sw].add_position("north", Some(west));
+            board.positions[sw].add_position("east",  Some(south));
+            board.positions[se].add_position("north", Some(east));
+            board.positions[se].add_position("west",  Some(south));
 
             prev_north = Some(north);
             prev_east  = Some(east);
@@ -177,12 +177,13 @@ impl fmt::Debug for Board {
         let mut debug_string = String::new();
 
         for position in &self.positions {
-            debug_string += &format!("({} -> {},{},{},{}), ",
+            debug_string += &format!("({} -> {},{},{},{}; c: {}), ",
                 position.id,
                 self.get_id(position.north),
                 self.get_id(position.east),
                 self.get_id(position.south),
-                self.get_id(position.west));
+                self.get_id(position.west),
+                position.connections());
         }
 
         return write!(f, "{}", debug_string);
