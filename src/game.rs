@@ -1,3 +1,4 @@
+use board;
 use board::Board;
 use player::Player;
 
@@ -12,7 +13,7 @@ pub struct Game {
 impl Game {
     pub fn new(player1: Player, player2: Player) -> Game {
         Game {
-            board: Board::new(),
+            board: board::build(),
             player1: player1,
             player2: player2,
             current_player_id: 1,
