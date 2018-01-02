@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 
 use board::Board;
-use board::position::Position;
+use board::Position;
+use board::Direction::*;
 
 pub fn build() -> Board {
     let board = Board {
@@ -26,14 +27,14 @@ fn generate_positions(mut board: Board) -> Board {
         let south = board.add_position(Position::new(format!("{}s", layer), None, prev_south, Some(sw), Some(se)));
         let west  = board.add_position(Position::new(format!("{}w", layer), Some(nw), Some(sw), None, prev_west));
 
-        board.positions[nw].add_neighbour("east",  Some(north));
-        board.positions[nw].add_neighbour("south", Some(west));
-        board.positions[ne].add_neighbour("west",  Some(north));
-        board.positions[ne].add_neighbour("south", Some(east));
-        board.positions[sw].add_neighbour("north", Some(west));
-        board.positions[sw].add_neighbour("east",  Some(south));
-        board.positions[se].add_neighbour("north", Some(east));
-        board.positions[se].add_neighbour("west",  Some(south));
+        board.positions[nw].add_neighbour(East,  Some(north));
+        board.positions[nw].add_neighbour(South, Some(west));
+        board.positions[ne].add_neighbour(West,  Some(north));
+        board.positions[ne].add_neighbour(South, Some(east));
+        board.positions[sw].add_neighbour(North, Some(west));
+        board.positions[sw].add_neighbour(East,  Some(south));
+        board.positions[se].add_neighbour(North, Some(east));
+        board.positions[se].add_neighbour(West,  Some(south));
 
         prev_north = Some(north);
         prev_east  = Some(east);

@@ -1,3 +1,6 @@
+use board::Direction;
+use board::Direction::*;
+
 #[derive(Debug)]
 pub struct Position {
     // NB not using proper notation as it's a faff to work out with the way I'm generating the board
@@ -30,33 +33,30 @@ impl Position {
         return Position::new(id, None, None, None, None);
     }
 
-    pub fn add_connection(&mut self, connection: Option<usize>) {
+    fn add_connection(&mut self, connection: Option<usize>) {
         if let Some(p) = connection {
             self.connections.push(p);
         }
     }
 
-    pub fn add_neighbour(&mut self, direction: &str, position: Option<usize>) {
+    pub fn add_neighbour(&mut self, direction: Direction, position: Option<usize>) {
         match direction {
-            "north" => {
+            North => {
                 self.north = position;
                 self.add_connection(position);
             },
-            "east" => {
+            East => {
                 self.east = position;
                 self.add_connection(position);
             },
-            "south" => {
+            South => {
                 self.south = position;
                 self.add_connection(position);
             },
-            "west" => {
+            West => {
                 self.west = position;
                 self.add_connection(position);
             },
-            _ => {
-                panic!("Tried to add unknown position {}", direction);
-            }
         }
     }
 
