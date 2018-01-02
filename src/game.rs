@@ -38,7 +38,7 @@ impl Game {
         loop {
             self.print();
             self.make_move();
-            self.board.mills();
+            self.board.mills(self.current_player_id);
         }
     }
 

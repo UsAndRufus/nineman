@@ -9,6 +9,8 @@ pub fn build() -> Board {
     let board = Board {
         positions: Vec::new(),
         ids_to_positions: HashMap::new(),
+        p1_mills: HashMap::new(),
+        p2_mills: HashMap::new(),
     };
 
     generate_positions(board)
