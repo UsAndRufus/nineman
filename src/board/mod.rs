@@ -1,11 +1,12 @@
 pub use self::builder::build;
 
 mod builder;
+mod position;
 
 use std::fmt;
 use std::collections::HashMap;
 
-use position::Position;
+use self::position::Position;
 
 // Idea for a list of indices borrowed from here: https://rust-leipzig.github.io/architecture/2016/12/20/idiomatic-trees-in-rust/
 

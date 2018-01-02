@@ -2,7 +2,6 @@ extern crate itertools;
 
 pub mod board;
 pub mod player;
-pub mod position;
 pub mod game;
 
 #[cfg(test)]

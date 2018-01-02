@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use board::Board;
-use position::Position;
+use board::position::Position;
 
 pub fn build() -> Board {
     let board = Board {
