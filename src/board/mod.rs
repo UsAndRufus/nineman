@@ -17,6 +17,7 @@ pub struct Board {
 
 impl Board {
 
+    // move these over to builder at some point
     fn add_position(&mut self, position: Position) -> usize {
         let next_index = self.positions.len();
 

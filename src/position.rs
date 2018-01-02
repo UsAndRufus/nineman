@@ -36,7 +36,7 @@ impl Position {
         }
     }
 
-    pub fn add_position(&mut self, direction: &str, position: Option<usize>) {
+    pub fn add_neighbour(&mut self, direction: &str, position: Option<usize>) {
         match direction {
             "north" => {
                 self.north = position;

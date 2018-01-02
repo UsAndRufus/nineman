@@ -8,12 +8,14 @@ pub struct Player {
     pub id: i8,
     pub colour: String,
     pub bot: bool,
+    pub score: i8,
     pieces_left_to_place: Cell<i8>,
 }
 
 impl Player {
     pub fn new(name: String, id: i8, colour: String, bot: bool) -> Player {
-        Player { name: name, id: id, colour: colour, bot: bot, pieces_left_to_place: Cell::new(1) }
+        Player { name: name, id: id, colour: colour, bot: bot, score: 0,
+                 pieces_left_to_place: Cell::new(1) }
     }
 
     pub fn make_move(&self) -> (String, String) {
