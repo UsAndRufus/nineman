@@ -58,24 +58,39 @@ impl Board {
     pub fn mills(&self, player_id: i8) {
         for layer in 0..3 {
             for side in Direction::iterator() {
-                if let Some(mill) = self.find_mill(player_id, layer, side) {
+                if let Some(mill) = self.find_mill_for_side(player_id, layer, side) {
                     println!("Mill found for {}: {:?}", player_id, mill);
                 }
             }
         }
-    }
 
-    fn find_mill(&self, player_id: i8, layer: i8, side: &Direction) -> Option<(&Position, &Position, &Position)> {
-        match side {
-            &Direction::North => self.mill(player_id, format!("{}ne", layer), format!("{}n", layer), format!("{}nw", layer)),
-            &Direction::East  => self.mill(player_id, format!("{}ne", layer), format!("{}e", layer), format!("{}se", layer)),
-            &Direction::South => self.mill(player_id, format!("{}se", layer), format!("{}s", layer), format!("{}sw", layer)),
-            &Direction::West  => self.mill(player_id, format!("{}nw", layer), format!("{}w", layer), format!("{}sw", layer)),
+        for cross_section in Direction::iterator() {
+            if let Some(mill) = self.find_mill_for_cross_section(player_id, cross_section) {
+                println!("Mill found for {}: {:?}", player_id, mill);
+            }
         }
     }
 
-    fn mill(&self, player_id: i8, first: String, second: String, third: String) -> Option<(&Position, &Position, &Position)> {
-        let mill = (self.get_position(&first), self.get_position(&second), self.get_position(&third));
+    fn find_mill_for_side(&self, player_id: i8, layer: i8, side: &Direction) -> Option<(&Position, &Position, &Position)> {
+        match side {
+            &Direction::North => self.mill(player_id, &format!("{}ne", layer), &format!("{}n", layer), &format!("{}nw", layer)),
+            &Direction::East  => self.mill(player_id, &format!("{}ne", layer), &format!("{}e", layer), &format!("{}se", layer)),
+            &Direction::South => self.mill(player_id, &format!("{}se", layer), &format!("{}s", layer), &format!("{}sw", layer)),
+            &Direction::West  => self.mill(player_id, &format!("{}nw", layer), &format!("{}w", layer), &format!("{}sw", layer)),
+        }
+    }
+
+    fn find_mill_for_cross_section(&self, player_id: i8, cross_section: &Direction) -> Option<(&Position, &Position, &Position)> {
+        match cross_section {
+            &Direction::North => self.mill(player_id, "0n", "1n", "2n"),
+            &Direction::East  => self.mill(player_id, "0e", "1e", "2e"),
+            &Direction::South => self.mill(player_id, "0s", "1s", "2s"),
+            &Direction::West  => self.mill(player_id, "0w", "1w", "2w"),
+        }
+    }
+
+    fn mill(&self, player_id: i8, first: &str, second: &str, third: &str) -> Option<(&Position, &Position, &Position)> {
+        let mill = (self.get_position(first), self.get_position(second), self.get_position(third));
         match self.is_mill(player_id, mill) {
             true =>  Some(mill),
             false => None,
