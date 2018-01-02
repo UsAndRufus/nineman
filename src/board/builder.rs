@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use board::Board;
 use board::Position;
+use board::Direction;
 use board::Direction::*;
 
 pub fn build() -> Board {
@@ -36,6 +37,12 @@ fn generate_positions(mut board: Board) -> Board {
         board.positions[se].add_neighbour(North, Some(east));
         board.positions[se].add_neighbour(West,  Some(south));
 
+        add_connection_to_prev(&mut board, North, prev_north, north);
+        add_connection_to_prev(&mut board, East,  prev_east, east);
+        add_connection_to_prev(&mut board, South, prev_south, south);
+        add_connection_to_prev(&mut board, West,  prev_west, west);
+
+
         prev_north = Some(north);
         prev_east  = Some(east);
         prev_south = Some(south);
@@ -43,4 +50,11 @@ fn generate_positions(mut board: Board) -> Board {
     }
 
     return board;
+}
+
+fn add_connection_to_prev(board: &mut Board, direction: Direction, from: Option<usize>, to: usize) {
+    if let Some(p) = from {
+        let f = board.positions.get_mut(p).unwrap();
+        f.add_neighbour(direction, Some(to));
+    }
 }
