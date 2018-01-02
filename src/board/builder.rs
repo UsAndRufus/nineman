@@ -23,10 +23,10 @@ fn generate_positions(mut board: Board) -> Board {
         let sw = board.new_blank_position(format!("{}sw", layer));
         let se = board.new_blank_position(format!("{}se", layer));
 
-        let north = board.add_position(Position::new(format!("{}n", layer), prev_north, None, Some(nw), Some(sw)));
-        let east  = board.add_position(Position::new(format!("{}e", layer),Some(ne),Some(se), prev_east, None));
-        let south = board.add_position(Position::new(format!("{}s", layer), None, prev_south, Some(sw), Some(se)));
-        let west  = board.add_position(Position::new(format!("{}w", layer), Some(nw), Some(sw), None, prev_west));
+        let north = board.add_position(Position::new(format!("{}n", layer), prev_north, Some(ne), None, Some(nw)));
+        let east  = board.add_position(Position::new(format!("{}e", layer), Some(ne), prev_east, Some(se), None));
+        let south = board.add_position(Position::new(format!("{}s", layer), None, Some(se), prev_south, Some(sw)));
+        let west  = board.add_position(Position::new(format!("{}w", layer), Some(nw), None, Some(sw), prev_west));
 
         board.positions[nw].add_neighbour(East,  Some(north));
         board.positions[nw].add_neighbour(South, Some(west));
@@ -37,10 +37,10 @@ fn generate_positions(mut board: Board) -> Board {
         board.positions[se].add_neighbour(North, Some(east));
         board.positions[se].add_neighbour(West,  Some(south));
 
-        add_connection_to_prev(&mut board, North, prev_north, north);
-        add_connection_to_prev(&mut board, East,  prev_east, east);
-        add_connection_to_prev(&mut board, South, prev_south, south);
-        add_connection_to_prev(&mut board, West,  prev_west, west);
+        add_connection_to_prev(&mut board, South, prev_north, north);
+        add_connection_to_prev(&mut board, West,  prev_east, east);
+        add_connection_to_prev(&mut board, North, prev_south, south);
+        add_connection_to_prev(&mut board, East,  prev_west, west);
 
 
         prev_north = Some(north);
