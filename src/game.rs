@@ -38,6 +38,7 @@ impl Game {
         loop {
             self.print();
             self.make_move();
+            self.board.mills();
         }
     }
 

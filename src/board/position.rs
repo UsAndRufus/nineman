@@ -1,9 +1,9 @@
 use std::ops::Index;
+use std::fmt;
 
 use board::Direction;
 use board::Direction::*;
 
-#[derive(Debug)]
 pub struct Position {
     // NB not using proper notation as it's a faff to work out with the way I'm generating the board
     pub id:    String,
@@ -107,5 +107,19 @@ impl Index<Direction> for Position {
             South => &self.south,
             West  => &self.west,
         }
+    }
+}
+
+impl PartialEq for Position {
+    fn eq(&self, other: &Position) -> bool {
+        self.id == other.id
+    }
+}
+
+impl Eq for Position {}
+
+impl fmt::Debug for Position {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.id)
     }
 }

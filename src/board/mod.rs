@@ -15,6 +15,7 @@ use self::direction::Direction;
 pub struct Board {
     pub positions: Vec<Position>,
     pub ids_to_positions: HashMap<String, usize>,
+    //mills: HashMap<(Position,Position,Position), bool>,
 }
 
 impl Board {
@@ -51,6 +52,39 @@ impl Board {
             self.get_mut_position(from_id).remove();
             self.get_mut_position(to_id).place(player_id);
         }
+    }
+
+    pub fn mills(&self) {
+        for layer in 0..3 {
+            for side in Direction::iterator() {
+                if let Some(mill) = self.find_mill(layer, side) {
+                    println!("Mill found: {:?}", mill);
+                }
+            }
+        }
+    }
+
+    fn find_mill(&self, layer: i8, side: &Direction) -> Option<(&Position, &Position, &Position)> {
+        match side {
+            &Direction::North => self.mill(format!("{}ne", layer), format!("{}n", layer), format!("{}nw", layer)),
+            &Direction::East  => self.mill(format!("{}ne", layer), format!("{}e", layer), format!("{}se", layer)),
+            &Direction::South => self.mill(format!("{}se", layer), format!("{}s", layer), format!("{}sw", layer)),
+            &Direction::West  => self.mill(format!("{}nw", layer), format!("{}w", layer), format!("{}sw", layer)),
+        }
+    }
+
+    fn mill(&self, first: String, second: String, third: String) -> Option<(&Position, &Position, &Position)> {
+        let mill = (self.get_position(&first), self.get_position(&second), self.get_position(&third));
+        match self.is_mill(mill) {
+            true =>  Some(mill),
+            false => None,
+        }
+    }
+
+    fn is_mill(&self, mill: (&Position, &Position, &Position)) -> bool {
+        mill.0.piece() == mill.1.piece() &&
+        mill.0.piece() == mill.2.piece() &&
+        mill.0.piece() != 0
     }
 
     pub fn get_id(&self, position: Option<usize>) -> String {
