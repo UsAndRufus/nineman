@@ -15,7 +15,6 @@ use self::direction::Direction;
 pub struct Board {
     pub positions: Vec<Position>,
     pub ids_to_positions: HashMap<String, usize>,
-
 }
 
 impl Board {
@@ -144,10 +143,10 @@ impl fmt::Debug for Board {
         for position in &self.positions {
             debug_string += &format!("({} -> {},{},{},{}; c: {}), ",
                 position.id,
-                self.get_id(position.north),
-                self.get_id(position.east),
-                self.get_id(position.south),
-                self.get_id(position.west),
+                self.get_id(position[Direction::North]),
+                self.get_id(position[Direction::East]),
+                self.get_id(position[Direction::South]),
+                self.get_id(position[Direction::West]),
                 position.connections());
         }
 

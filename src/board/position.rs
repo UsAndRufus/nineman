@@ -1,3 +1,5 @@
+use std::ops::Index;
+
 use board::Direction;
 use board::Direction::*;
 
@@ -6,12 +8,11 @@ pub struct Position {
     // NB not using proper notation as it's a faff to work out with the way I'm generating the board
     pub id:    String,
     piece:     i8,
-    // TODO: should probably just make this a map
-    // TODO: if not at least make private yeah
-    pub north: Option<usize>,
-    pub east:  Option<usize>,
-    pub south: Option<usize>,
-    pub west:  Option<usize>,
+    // TODO: should this be a map?
+    north: Option<usize>,
+    east:  Option<usize>,
+    south: Option<usize>,
+    west:  Option<usize>,
     connections: Vec<usize>
 }
 
@@ -93,5 +94,18 @@ impl Position {
 
     pub fn connections(&self) -> String {
         format!("{:?}", self.connections)
+    }
+}
+
+impl Index<Direction> for Position {
+    type Output = Option<usize>;
+
+    fn index(&self, direction: Direction) -> &Option<usize> {
+        match direction {
+            North => &self.north,
+            East  => &self.east,
+            South => &self.south,
+            West  => &self.west,
+        }
     }
 }
