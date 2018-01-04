@@ -7,6 +7,10 @@ use std::collections::HashMap;
 use std::collections::HashSet;
 use std::fmt;
 
+use term_painter::Color::*;
+use term_painter::Painted;
+use term_painter::ToStyle;
+
 use self::position::Position;
 use self::direction::Direction;
 use self::mill::Mill;
@@ -204,42 +208,52 @@ impl Board {
 
     pub fn print(&self) {
         println!("{}----------{}----------{}",
-            self.get_position("0nw").piece(),
-            self.get_position("0n").piece(),
-            self.get_position("0ne").piece());
+            self.styled_piece("0nw"),
+            self.styled_piece("0n"),
+            self.styled_piece("0ne"));
         println!("|          |          |");
         println!("|   {}------{}------{}   |",
-            self.get_position("1nw").piece(),
-            self.get_position("1n").piece(),
-            self.get_position("1ne").piece());
+            self.styled_piece("1nw"),
+            self.styled_piece("1n"),
+            self.styled_piece("1ne"));
         println!("|   |      |      |   |");
         println!("|   |   {}--{}--{}   |   |",
-            self.get_position("2nw").piece(),
-            self.get_position("2n").piece(),
-            self.get_position("2ne").piece());
+            self.styled_piece("2nw"),
+            self.styled_piece("2n"),
+            self.styled_piece("2ne"));
         println!("|   |   |     |   |   |");
         println!("{}---{}---{}     {}---{}---{}",
-            self.get_position("0w").piece(),
-            self.get_position("1w").piece(),
-            self.get_position("2w").piece(),
-            self.get_position("2e").piece(),
-            self.get_position("1e").piece(),
-            self.get_position("0e").piece());
+            self.styled_piece("0w"),
+            self.styled_piece("1w"),
+            self.styled_piece("2w"),
+            self.styled_piece("2e"),
+            self.styled_piece("1e"),
+            self.styled_piece("0e"));
         println!("|   |   |     |   |   |");
         println!("|   |   {}--{}--{}   |   |",
-            self.get_position("2sw").piece(),
-            self.get_position("2s").piece(),
-            self.get_position("2se").piece());
+            self.styled_piece("2sw"),
+            self.styled_piece("2s"),
+            self.styled_piece("2se"));
         println!("|   |      |      |   |");
         println!("|   {}------{}------{}   |",
-            self.get_position("1sw").piece(),
-            self.get_position("1s").piece(),
-            self.get_position("1se").piece());
+            self.styled_piece("1sw"),
+            self.styled_piece("1s"),
+            self.styled_piece("1se"));
         println!("|          |          |");
         println!("{}----------{}----------{}",
-            self.get_position("0sw").piece(),
-            self.get_position("0s").piece(),
-            self.get_position("0se").piece());
+            self.styled_piece("0sw"),
+            self.styled_piece("0s"),
+            self.styled_piece("0se"));
+    }
+
+    fn styled_piece(&self, pos: &str) -> Painted<String> {
+        let piece = self.get_position(pos).piece();
+        match piece {
+            0 => White.paint(piece.to_string()),
+            1 => Green.paint(piece.to_string()),
+            2 => Blue.paint(piece.to_string()),
+            _ => panic!("Unknown piece type {}", piece),
+        }
     }
 
     pub fn is_valid_position(&self, position: &String) -> bool {

@@ -1,4 +1,5 @@
 extern crate itertools;
+extern crate term_painter;
 
 pub mod board;
 pub mod player;
