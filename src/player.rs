@@ -24,6 +24,11 @@ impl Player {
         mv
     }
 
+    pub fn mill(&self) -> String {
+        println!("Time to mill");
+        self.get_input()
+    }
+
     pub fn is_placement(&self) -> bool {
         self.pieces_left_to_place.get() > 0
     }

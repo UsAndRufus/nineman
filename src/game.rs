@@ -37,8 +37,23 @@ impl<'a> Game<'a> {
         loop {
             self.print();
             self.make_move();
-            //self.board.mills(self.current_player_id);
+            self.mill();
             self.switch_player();
+        }
+    }
+
+    pub fn mill(&'a mut self) {
+        let can_mill;
+        {
+            can_mill = self.board.can_mill(self.current_player_id);
+        }
+
+        if can_mill {
+            let position;
+            {
+                position = self.current_player().mill();
+            }
+            self.board.perform_mill(position);
         }
     }
 

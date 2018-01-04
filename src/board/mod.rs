@@ -65,8 +65,22 @@ impl<'a> Board<'a> {
         }
     }
 
+    pub fn perform_mill(&mut self, position: String) {
+        // get rid of the piece here
+    }
+
     // TODO: consider MillFinder struct or something - or is that too Java-y?
-    pub fn mills(&'a self, player_id: i8) -> HashSet<(&'a Position, &'a Position, &'a Position)> {
+    pub fn can_mill(&'a self, player_id: i8) -> bool {
+        let new_mills = self.update_mills(player_id);
+
+        match new_mills.len() {
+            0 => false,
+            1 => true,
+            _ => panic!("Have somehow created {} this turn: {:?}", new_mills.len(), new_mills),
+        }
+    }
+
+    fn update_mills(&'a self, player_id: i8) -> HashSet<(&Position, &Position, &Position)> {
         let mills = self.find_mills(player_id);
 
         let new_mills;
