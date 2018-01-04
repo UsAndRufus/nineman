@@ -1,19 +1,18 @@
-use board;
 use board::Board;
 use player::Player;
 
 #[derive(Debug)]
-pub struct Game {
-    pub board: Board,
+pub struct Game<'a> {
+    pub board: Board<'a>,
     pub player1: Player,
     pub player2: Player,
     current_player_id: i8,
 }
 
-impl Game {
-    pub fn new(player1: Player, player2: Player) -> Game {
+impl<'a> Game<'a> {
+    pub fn new(player1: Player, player2: Player) -> Self {
         Game {
-            board: board::build(),
+            board: Board::build(),
             player1: player1,
             player2: player2,
             current_player_id: 1,
@@ -34,11 +33,12 @@ impl Game {
         }
     }
 
-    pub fn game_loop(&mut self) {
+    pub fn game_loop(&'a mut self) {
         loop {
             self.print();
             self.make_move();
-            self.board.mills(self.current_player_id);
+            //self.board.mills(self.current_player_id);
+            self.switch_player();
         }
     }
 
@@ -57,7 +57,6 @@ impl Game {
         } else {
             self.board.move_piece(player_id, from, to);
         }
-        self.switch_player();
     }
 
     fn get_move(&self) -> (String, String) {
