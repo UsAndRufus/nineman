@@ -9,14 +9,13 @@ const STARTING_PIECES: i8 = 3;
 pub struct Player {
     pub name: String,
     pub id: i8,
-    pub bot: bool,
     score: Cell<i8>,
     pieces_left_to_place: Cell<i8>,
 }
 
 impl Player {
-    pub fn new(name: String, id: i8, bot: bool) -> Player {
-        Player { name: name, id: id, bot: bot, score: Cell::new(0),
+    pub fn new(name: String, id: i8) -> Player {
+        Player { name: name, id: id, score: Cell::new(0),
                  pieces_left_to_place: Cell::new(STARTING_PIECES) }
     }
 
