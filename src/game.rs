@@ -2,14 +2,14 @@ use board::Board;
 use player::Player;
 
 #[derive(Debug)]
-pub struct Game<'a> {
-    pub board: Board<'a>,
+pub struct Game {
+    pub board: Board,
     pub player1: Player,
     pub player2: Player,
     current_player_id: i8,
 }
 
-impl<'a> Game<'a> {
+impl Game {
     pub fn new(player1: Player, player2: Player) -> Self {
         Game {
             board: Board::build(),
@@ -33,32 +33,29 @@ impl<'a> Game<'a> {
         }
     }
 
-    pub fn game_loop(&'a mut self) {
+    pub fn game_loop(&mut self) {
         loop {
             self.print();
             self.make_move();
-            print!("can_mill: {}", self.board.can_mill());
-            //self.board.update_mills(self.current_player_id);
+            self.mill();
             self.switch_player();
         }
     }
 
-    // pub fn mill(&'a mut self) {
-    //     let can_mill;
-    //     {
-    //         can_mill = self.board.can_mill(self.current_player_id);
-    //     }
-    //
-    //     if can_mill {
-    //         let position;
-    //         {
-    //             position = self.current_player().mill();
-    //         }
-    //         self.board.perform_mill(position);
-    //     }
-    // }
+    fn mill(&mut self) {
+        let can_mill = self.board.update_mills(self.current_player_id);
 
-    pub fn make_move(&mut self) {
+        if can_mill {
+            self.board.print();
+            let mut milled = false;
+            while !milled {
+                let position = self.current_player().mill();
+                milled = self.board.perform_mill(position, self.current_player_id);
+            }
+        }
+    }
+
+    fn make_move(&mut self) {
 
         let (from, to) = self.get_move();
         let player_id = self.get_current_player_id();

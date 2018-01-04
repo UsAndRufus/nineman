@@ -1,36 +1,33 @@
 mod builder;
 mod position;
 mod direction;
+mod mill;
 
-use std::cell::Cell;
-use std::cell::RefCell;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::fmt;
 
 use self::position::Position;
 use self::direction::Direction;
+use self::mill::Mill;
 
 // Idea for a list of indices borrowed from here: https://rust-leipzig.github.io/architecture/2016/12/20/idiomatic-trees-in-rust/
 
-pub struct Board<'a> {
+pub struct Board {
     pub positions: Vec<Position>,
     pub ids_to_positions: HashMap<String, usize>,
-    p1_mills: RefCell<HashSet<(&'a Position, &'a Position, &'a Position)>>,
-    p2_mills: RefCell<HashSet<(&'a Position, &'a Position, &'a Position)>>,
-    // TODO: make into player1 and player2
-    can_mill: Cell<bool>,
+    p1_mills: HashSet<Mill>,
+    p2_mills: HashSet<Mill>,
 }
 
-impl<'a> Board<'a> {
+impl Board {
     // move these over to builder at some point
     pub fn build() -> Self {
         let board = Board {
             positions: Vec::new(),
             ids_to_positions: HashMap::new(),
-            p1_mills: RefCell::new(HashSet::new()),
-            p2_mills: RefCell::new(HashSet::new()),
-            can_mill: Cell::new(false),
+            p1_mills: HashSet::new(),
+            p2_mills: HashSet::new(),
         };
 
         builder::generate_positions(board)
@@ -69,35 +66,30 @@ impl<'a> Board<'a> {
         }
     }
 
-    pub fn perform_mill(&mut self, position: String) {
-        // get rid of the piece here
-    }
+    pub fn perform_mill(&mut self, id: String, from: i8) -> bool {
+        let position = self.get_mut_position(id);
+        if !position.is_empty() && !position.owned_by(from) {
+            position.remove();
+            true
+        } else {
+            false
+        }
 
-    pub fn can_mill(&self) -> bool {
-        self.can_mill.get()
     }
 
     // TODO: consider MillFinder struct or something - or is that too Java-y?
-    fn update_can_mill(&'a self, new_mills: HashSet<(&Position, &Position, &Position)>) {
-        match new_mills.len() {
-            0 => self.can_mill.set(false),
-            1 => self.can_mill.set(true),
-            _ => panic!("Have somehow created {} this turn: {:?}", new_mills.len(), new_mills),
-        }
-    }
-
-    pub fn update_mills(&'a self, player_id: i8) {
+    pub fn update_mills(&mut self, player_id: i8) -> bool {
         let mills = self.find_mills(player_id);
 
-        let new_mills;
+        let new_mills: HashSet<Mill>;
         match player_id {
             1 => {
-                new_mills = mills.difference(&self.p1_mills.borrow()).map(|t| *t).collect();
-                *self.p1_mills.borrow_mut() = mills;
+                new_mills = mills.difference(&self.p1_mills).map(|t| *t).collect();
+                self.p1_mills = mills;
             },
             2 => {
-                new_mills = mills.difference(&self.p2_mills.borrow()).map(|t| *t).collect();
-                *self.p2_mills.borrow_mut() = mills;
+                new_mills = mills.difference(&self.p2_mills).map(|t| *t).collect();
+                self.p2_mills = mills;
             },
             _ => {
                 panic!("Unknown player_id: {}", player_id);
@@ -106,16 +98,20 @@ impl<'a> Board<'a> {
 
         println!("p1_mills: {:?}, p2_mills: {:?}", self.p1_mills, self.p2_mills);
 
-        self.update_can_mill(new_mills);
+        match new_mills.len() {
+            0 => false,
+            1 => true,
+            _ => panic!("Have somehow created {} this turn: {:?}", new_mills.len(), new_mills),
+        }
 
     }
 
-    fn find_mills(&'a self, player_id: i8) -> HashSet<(&'a Position, &'a Position, &'a Position)> {
+    fn find_mills(&self, player_id: i8) -> HashSet<Mill> {
         let mut mills = HashSet::new();
         for layer in 0..3 {
             for side in Direction::iterator() {
                 if let Some(mill) = self.find_mill_for_side(player_id, layer, side) {
-                    println!("Mill found for {}: {:?}", player_id, mill);
+                    println!("Mill found for {}: {}", player_id, self.mill_str(&mill));
                     mills.insert(mill);
                 }
             }
@@ -123,7 +119,7 @@ impl<'a> Board<'a> {
 
         for cross_section in Direction::iterator() {
             if let Some(mill) = self.find_mill_for_cross_section(player_id, cross_section) {
-                println!("Mill found for {}: {:?}", player_id, mill);
+                println!("Mill found for {}: {}", player_id, self.mill_str(&mill));
                 mills.insert(mill);
             }
         }
@@ -131,7 +127,7 @@ impl<'a> Board<'a> {
         mills
     }
 
-    fn find_mill_for_side(&self, player_id: i8, layer: i8, side: &Direction) -> Option<(&Position, &Position, &Position)> {
+    fn find_mill_for_side(&self, player_id: i8, layer: i8, side: &Direction) -> Option<Mill> {
         match side {
             &Direction::North => self.mill(player_id, &format!("{}ne", layer), &format!("{}n", layer), &format!("{}nw", layer)),
             &Direction::East  => self.mill(player_id, &format!("{}ne", layer), &format!("{}e", layer), &format!("{}se", layer)),
@@ -140,7 +136,7 @@ impl<'a> Board<'a> {
         }
     }
 
-    fn find_mill_for_cross_section(&self, player_id: i8, cross_section: &Direction) -> Option<(&Position, &Position, &Position)> {
+    fn find_mill_for_cross_section(&self, player_id: i8, cross_section: &Direction) -> Option<Mill> {
         match cross_section {
             &Direction::North => self.mill(player_id, "0n", "1n", "2n"),
             &Direction::East  => self.mill(player_id, "0e", "1e", "2e"),
@@ -149,18 +145,28 @@ impl<'a> Board<'a> {
         }
     }
 
-    fn mill(&self, player_id: i8, first: &str, second: &str, third: &str) -> Option<(&Position, &Position, &Position)> {
-        let mill = (self.get_position(first), self.get_position(second), self.get_position(third));
-        match self.is_mill(player_id, mill) {
+    fn mill(&self, player_id: i8, first: &str, second: &str, third: &str) -> Option<Mill> {
+        let mill = Mill {
+            first: self.ids_to_positions[first],
+            second: self.ids_to_positions[second],
+            third: self.ids_to_positions[third]};
+        match self.is_mill(player_id, &mill) {
             true =>  Some(mill),
             false => None,
         }
     }
 
-    fn is_mill(&self, player_id: i8, mill: (&Position, &Position, &Position)) -> bool {
-        mill.0.owned_by(player_id) &&
-        mill.1.owned_by(player_id) &&
-        mill.2.owned_by(player_id)
+    fn is_mill(&self, player_id: i8, mill: &Mill) -> bool {
+        self.positions.get(mill.first).unwrap().owned_by(player_id) &&
+        self.positions.get(mill.second).unwrap().owned_by(player_id) &&
+        self.positions.get(mill.third).unwrap().owned_by(player_id)
+    }
+
+    fn mill_str(&self, mill: &Mill) -> String {
+        format!("({}, {}, {})",
+            self.positions.get(mill.first).unwrap().id,
+            self.positions.get(mill.second).unwrap().id,
+            self.positions.get(mill.third).unwrap().id)
     }
 
     pub fn get_id(&self, position: Option<usize>) -> String {
@@ -245,7 +251,7 @@ impl<'a> Board<'a> {
     }
 }
 
-impl<'a> fmt::Debug for Board<'a> {
+impl fmt::Debug for Board {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 
         let mut debug_string = String::new();
