@@ -2,10 +2,11 @@ mod builder;
 mod position;
 mod direction;
 
-use std::fmt;
+use std::cell::Cell;
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::collections::HashSet;
-use std::cell::RefCell;
+use std::fmt;
 
 use self::position::Position;
 use self::direction::Direction;
@@ -17,6 +18,8 @@ pub struct Board<'a> {
     pub ids_to_positions: HashMap<String, usize>,
     p1_mills: RefCell<HashSet<(&'a Position, &'a Position, &'a Position)>>,
     p2_mills: RefCell<HashSet<(&'a Position, &'a Position, &'a Position)>>,
+    // TODO: make into player1 and player2
+    can_mill: Cell<bool>,
 }
 
 impl<'a> Board<'a> {
@@ -27,6 +30,7 @@ impl<'a> Board<'a> {
             ids_to_positions: HashMap::new(),
             p1_mills: RefCell::new(HashSet::new()),
             p2_mills: RefCell::new(HashSet::new()),
+            can_mill: Cell::new(false),
         };
 
         builder::generate_positions(board)
@@ -69,18 +73,20 @@ impl<'a> Board<'a> {
         // get rid of the piece here
     }
 
-    // TODO: consider MillFinder struct or something - or is that too Java-y?
-    pub fn can_mill(&'a self, player_id: i8) -> bool {
-        let new_mills = self.update_mills(player_id);
+    pub fn can_mill(&self) -> bool {
+        self.can_mill.get()
+    }
 
+    // TODO: consider MillFinder struct or something - or is that too Java-y?
+    fn update_can_mill(&'a self, new_mills: HashSet<(&Position, &Position, &Position)>) {
         match new_mills.len() {
-            0 => false,
-            1 => true,
+            0 => self.can_mill.set(false),
+            1 => self.can_mill.set(true),
             _ => panic!("Have somehow created {} this turn: {:?}", new_mills.len(), new_mills),
         }
     }
 
-    fn update_mills(&'a self, player_id: i8) -> HashSet<(&Position, &Position, &Position)> {
+    pub fn update_mills(&'a self, player_id: i8) {
         let mills = self.find_mills(player_id);
 
         let new_mills;
@@ -100,7 +106,7 @@ impl<'a> Board<'a> {
 
         println!("p1_mills: {:?}, p2_mills: {:?}", self.p1_mills, self.p2_mills);
 
-        new_mills
+        self.update_can_mill(new_mills);
 
     }
 

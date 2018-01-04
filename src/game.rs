@@ -37,25 +37,26 @@ impl<'a> Game<'a> {
         loop {
             self.print();
             self.make_move();
-            self.mill();
+            print!("can_mill: {}", self.board.can_mill());
+            //self.board.update_mills(self.current_player_id);
             self.switch_player();
         }
     }
 
-    pub fn mill(&'a mut self) {
-        let can_mill;
-        {
-            can_mill = self.board.can_mill(self.current_player_id);
-        }
-
-        if can_mill {
-            let position;
-            {
-                position = self.current_player().mill();
-            }
-            self.board.perform_mill(position);
-        }
-    }
+    // pub fn mill(&'a mut self) {
+    //     let can_mill;
+    //     {
+    //         can_mill = self.board.can_mill(self.current_player_id);
+    //     }
+    //
+    //     if can_mill {
+    //         let position;
+    //         {
+    //             position = self.current_player().mill();
+    //         }
+    //         self.board.perform_mill(position);
+    //     }
+    // }
 
     pub fn make_move(&mut self) {
 
