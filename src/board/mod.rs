@@ -10,6 +10,7 @@ use std::fmt;
 use self::position::Position;
 use self::direction::Direction;
 use self::mill::Mill;
+pub use self::builder::build;
 
 // Idea for a list of indices borrowed from here: https://rust-leipzig.github.io/architecture/2016/12/20/idiomatic-trees-in-rust/
 
@@ -22,17 +23,6 @@ pub struct Board {
 
 impl Board {
     // move these over to builder at some point
-    pub fn build() -> Self {
-        let board = Board {
-            positions: Vec::new(),
-            ids_to_positions: HashMap::new(),
-            p1_mills: HashSet::new(),
-            p2_mills: HashSet::new(),
-        };
-
-        builder::generate_positions(board)
-    }
-
     fn add_position(&mut self, position: Position) -> usize {
         let next_index = self.positions.len();
 

@@ -1,9 +1,24 @@
+use std::collections::HashMap;
+use std::collections::HashSet;
+
 use board::Board;
 use board::Position;
 use board::Direction;
 use board::Direction::*;
 
+pub fn build() -> Board {
+    let board = Board {
+        positions: Vec::new(),
+        ids_to_positions: HashMap::new(),
+        p1_mills: HashSet::new(),
+        p2_mills: HashSet::new(),
+    };
+
+    generate_positions(board)
+}
+
 pub fn generate_positions(mut board: Board) -> Board {
+
     let (mut prev_north, mut prev_south, mut prev_east, mut prev_west) = (None, None, None, None);
     for layer in 0..3 {
 
