@@ -57,14 +57,34 @@ impl Board {
     }
 
     pub fn perform_mill(&mut self, id: String, from: i8) -> bool {
-        let position = self.get_mut_position(id);
-        if !position.is_empty() && !position.owned_by(from) {
-            position.remove();
-            true
-        } else {
-            false
+        let valid;
+        {
+            let position = self.get_mut_position(id);
+            valid = !position.is_empty() && !position.owned_by(from);
+            if  valid {
+                position.remove();
+            }
         }
 
+        self.validate_mills(from);
+
+        valid
+
+    }
+
+    fn validate_mills(&mut self, from: i8) {
+        let mut mills;
+        match from {
+            1 => mills = self.p1_mills.clone(),
+            2 => mills = self.p2_mills.clone(),
+            _ => panic!("Player {} found!", from),
+        }
+        mills.retain(|&m| self.is_mill(2, &m));
+        match from {
+            1 => self.p2_mills = mills,
+            2 => self.p1_mills = mills,
+            _ => panic!("Player {} found!", from),
+        }
     }
 
     // TODO: consider MillFinder struct or something - or is that too Java-y?
@@ -91,6 +111,7 @@ impl Board {
         match new_mills.len() {
             0 => false,
             1 => true,
+            2 => true,
             _ => panic!("Have somehow created {} this turn: {:?}", new_mills.len(), new_mills),
         }
 
