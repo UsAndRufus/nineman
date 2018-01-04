@@ -2,20 +2,23 @@ use std::io;
 use std::cell::Cell;
 use itertools::Itertools;
 
+const WIN_SCORE: i8 = 1;
+const STARTING_PIECES: i8 = 3;
+
 #[derive(Debug)]
 pub struct Player {
     pub name: String,
     pub id: i8,
     pub colour: String,
     pub bot: bool,
-    pub score: i8,
+    score: Cell<i8>,
     pieces_left_to_place: Cell<i8>,
 }
 
 impl Player {
     pub fn new(name: String, id: i8, colour: String, bot: bool) -> Player {
-        Player { name: name, id: id, colour: colour, bot: bot, score: 0,
-                 pieces_left_to_place: Cell::new(9) }
+        Player { name: name, id: id, colour: colour, bot: bot, score: Cell::new(0),
+                 pieces_left_to_place: Cell::new(STARTING_PIECES) }
     }
 
     pub fn make_move(&self) -> (String, String) {
@@ -37,6 +40,18 @@ impl Player {
         if self.is_placement() {
             self.pieces_left_to_place.set(self.pieces_left_to_place.get() - 1);
         }
+    }
+
+    pub fn increment_score(&self) {
+        self.score.set(self.pieces_left_to_place.get() + 1);
+    }
+
+    pub fn has_won(&self) -> bool {
+        self.score.get() >= WIN_SCORE
+    }
+
+    pub fn score(&self) -> i8 {
+        self.score.get()
     }
 
     fn get_move(&self) -> (String, String) {

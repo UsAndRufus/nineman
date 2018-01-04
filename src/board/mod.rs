@@ -69,7 +69,6 @@ impl Board {
         self.validate_mills(from);
 
         valid
-
     }
 
     fn validate_mills(&mut self, from: i8) {

@@ -34,13 +34,20 @@ impl Game {
         }
     }
 
-    pub fn game_loop(&mut self) {
+    pub fn game_loop(&mut self) -> i8 {
         loop {
             self.print();
             self.make_move();
             self.mill();
+
+            if self.get_current_player().has_won() {
+                break
+            }
+
             self.switch_player();
         }
+
+        self.end_game()
     }
 
     fn mill(&mut self) {
@@ -53,6 +60,7 @@ impl Game {
                 let position = self.current_player().mill();
                 milled = self.board.perform_mill(position, self.current_player_id);
             }
+            self.get_current_player().increment_score();
         }
     }
 
@@ -71,6 +79,15 @@ impl Game {
         } else {
             self.board.move_piece(player_id, from, to);
         }
+    }
+
+    fn end_game(&self) -> i8 {
+        let winner = self.get_current_player();
+        let loser = self.get_other_player();
+        println!("Congratulations, {}! You win with a score of {}", winner.name, winner.score());
+        println!("Commiserations, {}. You list with a score of {}", loser.name, loser.score());
+
+        winner.id
     }
 
     fn get_move(&self) -> (String, String) {
@@ -115,6 +132,14 @@ impl Game {
         match self.current_player_id {
             1 => &self.player1,
             2 => &self.player2,
+            _ => panic!("Invalid player id: {}", self.current_player_id),
+        }
+    }
+
+    fn get_other_player(&self) -> &Player {
+        match self.current_player_id {
+            2 => &self.player1,
+            1 => &self.player2,
             _ => panic!("Invalid player id: {}", self.current_player_id),
         }
     }
