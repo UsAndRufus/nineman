@@ -81,22 +81,22 @@ impl Board {
         if can_move {
             self.get_mut_position(from_id).remove();
             self.get_mut_position(to_id).place(player_id);
+        } else {
+            panic!("Invalid move from {}: ({},{})", player_id, from_id, to_id);
         }
     }
 
-    pub fn perform_mill(&mut self, id: String, from: i8) -> bool {
-        let valid;
+    pub fn perform_mill(&mut self, id: String, from: i8) {
         {
             let position = self.get_mut_position(id);
-            valid = !position.is_empty() && !position.owned_by(from);
-            if  valid {
+            if !position.is_empty() && !position.owned_by(from) {
                 position.remove();
+            } else {
+                panic!("Invalid mill by player {}: {}", from, position.id);
             }
         }
 
         self.validate_mills(from);
-
-        valid
     }
 
     fn validate_mills(&mut self, from: i8) {
@@ -132,8 +132,6 @@ impl Board {
                 panic!("Unknown player_id: {}", player_id);
             }
         }
-
-        println!("p1_mills: {:?}, p2_mills: {:?}", self.p1_mills, self.p2_mills);
 
         match new_mills.len() {
             0 => false,

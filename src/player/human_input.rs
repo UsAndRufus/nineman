@@ -15,17 +15,27 @@ impl HumanInput {
 }
 
 impl InputHandler for HumanInput {
-    // TODO: loop til valid
     fn get_placement(&self, available_places: Vec<String>) -> String {
         println!("Can place at: {:?}", available_places);
-        self.get_input()
+        loop {
+            let placement = self.get_input();
+            if available_places.contains(&placement) {
+                break placement
+            }
+            println!("Invalid placement");
+        }
     }
 
     fn get_move(&self, available_moves: Vec<(String, String)>) -> (String, String) {
         loop {
             println!("Available moves: {:?}", available_moves);
             match self.get_input().split(",").map(|m| m.to_string()).next_tuple() {
-                Some(mv) => break mv,
+                Some(mv) => {
+                    if available_moves.contains(&mv) {
+                        break mv
+                    }
+                    println!("Invalid move");
+                }
                 None => println!("Invalid move, must be in format 0n,0e"),
             }
         }
@@ -34,6 +44,12 @@ impl InputHandler for HumanInput {
     // TODO: move looping til correct mill to here
     fn get_mill(&self, available_mills: Vec<String>) -> String {
         println!("Mill! Select piece to destroy: {:?}", available_mills);
-        self.get_input()
+        loop {
+            let mill = self.get_input();
+            if available_mills.contains(&mill) {
+                break mill
+            }
+            println!("Invalid mill");
+        }
     }
 }

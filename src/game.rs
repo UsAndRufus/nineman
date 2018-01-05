@@ -47,12 +47,9 @@ impl Game {
 
         if can_mill {
             self.board.print();
-            let mut milled = false;
-            while !milled {
-                let other = self.get_other_player().id;
-                let position = self.get_current_player().mill(self.board.available_mills(other));
-                milled = self.board.perform_mill(position, self.current_player_id);
-            }
+            let available_mills = self.board.available_mills(self.get_other_player().id);
+            let position = self.get_current_player().mill(available_mills);
+            self.board.perform_mill(position, self.current_player_id);
             self.get_current_player().increment_score();
         }
     }
@@ -82,16 +79,7 @@ impl Game {
     fn get_move(&self) -> (String, String) {
         let player = self.get_current_player();
 
-        let mut mv = ("".to_string(), "".to_string());
-        let mut valid = false;
-
-        while !valid {
-            println!("{}", self.render_current_move());
-            mv = player.get_move(self.board.available_moves(player.id));
-            valid = self.move_valid(&mv);
-        }
-
-        mv
+        player.get_move(self.board.available_moves(player.id))
     }
 
     fn render_current_move(&self) -> String {
@@ -105,13 +93,6 @@ impl Game {
         }
 
         format!("P{} to {}:", player.id, mv)
-    }
-
-    fn move_valid(&self, mv: &(String, String)) -> bool {
-        let (ref from, ref to) = *mv;
-        (from == "" || self.board.is_valid_position(from)) &&
-        self.board.is_valid_position(to) &&
-        self.board.is_empty_position(to)
     }
 
     fn get_current_player_id(&self) -> i8 {
