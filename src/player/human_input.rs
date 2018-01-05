@@ -21,8 +21,9 @@ impl InputHandler for HumanInput {
         self.get_input()
     }
 
-    fn get_move(&self) -> (String, String) {
+    fn get_move(&self, available_moves: Vec<(String, String)>) -> (String, String) {
         loop {
+            println!("Available moves: {:?}", available_moves);
             match self.get_input().split(",").map(|m| m.to_string()).next_tuple() {
                 Some(mv) => break mv,
                 None => println!("Invalid move, must be in format 0n,0e"),

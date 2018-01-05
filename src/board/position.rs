@@ -93,7 +93,11 @@ impl Position {
         }
     }
 
-    pub fn connections(&self) -> String {
+    pub fn connections(&self) -> &Vec<usize> {
+        &self.connections
+    }
+
+    pub fn connections_string(&self) -> String {
         format!("{:?}", self.connections)
     }
 }

@@ -49,6 +49,22 @@ impl Board {
         self.positions.iter().filter(|p| p.owned_by(id)).map(|p| p.id.to_owned()).collect()
     }
 
+    pub fn available_moves(&self, id: i8) -> Vec<(String, String)> {
+        let owned: Vec<&Position> = self.positions.iter().filter(|p| p.owned_by(id)).collect();
+
+        let mut available_moves = Vec::new();
+        for position in owned {
+            for c in position.connections() {
+                let connection = self.positions.get(*c).unwrap();
+                if connection.is_empty() {
+                    available_moves.push((position.id.to_owned(), connection.id.to_owned()));
+                }
+            }
+        }
+
+        available_moves
+    }
+
     pub fn place_piece(&mut self, player_id: i8, piece_id: String) {
         let position = self.get_mut_position(piece_id);
         position.place(player_id);
@@ -295,7 +311,7 @@ impl fmt::Debug for Board {
                 self.get_id(position[Direction::East]),
                 self.get_id(position[Direction::South]),
                 self.get_id(position[Direction::West]),
-                position.connections());
+                position.connections_string());
         }
 
         return write!(f, "{}", debug_string);

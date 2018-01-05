@@ -58,18 +58,14 @@ impl Game {
     }
 
     fn make_move(&mut self) {
-
-        let (from, to) = self.get_move();
         let player_id = self.get_current_player_id();
 
-        println!("from: {}, to: {}", from, to);
-
         if self.get_current_player().is_placement() {
-            if from.is_empty() {
-                self.board.place_piece(player_id, to);
-                self.get_current_player().place_piece();
-            }
+            let placement = self.get_current_player().get_placement(self.board.available_places());
+            self.board.place_piece(player_id, placement);
+            self.get_current_player().place_piece();
         } else {
+            let (from, to) = self.get_move();
             self.board.move_piece(player_id, from, to);
         }
     }
@@ -91,12 +87,13 @@ impl Game {
 
         while !valid {
             println!("{}", self.render_current_move());
-            mv = player.get_move(self.board.available_places());
+            mv = player.get_move(self.board.available_moves(player.id));
             valid = self.move_valid(&mv);
         }
 
         mv
     }
+
     fn render_current_move(&self) -> String {
         let player = self.get_current_player();
 

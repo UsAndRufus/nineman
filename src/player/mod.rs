@@ -52,12 +52,14 @@ impl Player {
         self.score.get()
     }
 
-    pub fn get_move(&self, available_moves: Vec<String>) -> (String, String) {
-        if self.is_placement() {
-            ("".to_string(), self.input_handler.get_placement(available_moves))
-        } else {
-            self.input_handler.get_move()
-        }
+    pub fn get_move(&self, available_moves: Vec<(String, String)>) -> (String, String) {
+        assert!(!self.is_placement());
+        self.input_handler.get_move(available_moves)
+    }
+
+    pub fn get_placement(&self, available_places: Vec<String>) -> String {
+        assert!(self.is_placement());
+        self.input_handler.get_placement(available_places)
     }
 
     pub fn get_pieces_left_to_place(&self) -> i8 {
