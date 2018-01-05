@@ -6,3 +6,4 @@ authors = ["Edward Bennigsen <edward.bennigsen@protonmail.com>"]
 [dependencies]
 itertools = "0.7.3"
 term-painter = "0.2.4"
+rand = "0.4.1"

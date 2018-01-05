@@ -1,13 +1,16 @@
 mod input_handler;
-pub mod human_input;
+mod human_input;
+mod random_input;
 
 use std::cell::Cell;
 use std::fmt;
 
 pub use self::input_handler::InputHandler;
+pub use self::human_input::HumanInput;
+pub use self::random_input::RandomInput;
 
-const WIN_SCORE: i8 = 1;
-const STARTING_PIECES: i8 = 3;
+const WIN_SCORE: i8 = 6;
+const STARTING_PIECES: i8 = 9;
 
 pub struct Player {
     pub name: String,
