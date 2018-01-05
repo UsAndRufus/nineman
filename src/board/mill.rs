@@ -4,3 +4,9 @@ pub struct Mill {
     pub second: usize,
     pub third: usize,
 }
+
+impl Mill {
+    pub fn contains(&self, id: usize) -> bool {
+        self.first == id || self.second == id || self.third == id
+    }
+}

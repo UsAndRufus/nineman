@@ -46,7 +46,31 @@ impl Board {
     }
 
     pub fn available_mills(&self, id: i8) -> Vec<String> {
-        self.positions.iter().filter(|p| p.owned_by(id)).map(|p| p.id.to_owned()).collect()
+        let all_positions: HashSet<String>
+            = self.positions.iter().filter(|p| p.owned_by(id)).map(|p| p.id.to_owned()).collect();
+
+        let mills;
+        match id {
+            1 => mills = &self.p1_mills,
+            2 => mills = &self.p2_mills,
+            _ => panic!("Unknown player {}", id),
+        }
+
+        let mut in_mills = HashSet::new();
+        for mill in mills {
+            in_mills.insert(self.get_id(Some(mill.first)));
+            in_mills.insert(self.get_id(Some(mill.second)));
+            in_mills.insert(self.get_id(Some(mill.third)));
+        }
+
+        let not_in_mills: Vec<String>
+            = all_positions.difference(&in_mills).map(|p| p.to_owned()).collect();
+
+        if not_in_mills.len() == 0 {
+            all_positions.into_iter().collect()
+        } else {
+            not_in_mills
+        }
     }
 
     pub fn available_moves(&self, id: i8) -> Vec<(String, String)> {

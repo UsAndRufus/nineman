@@ -3,10 +3,10 @@ Nine Men's Morris implementation in Rust.
 
 ## Rules/variants
 * The "flying" variant is not (currently) implemented
-* Currently can mill pieces from other mills (to be fixed)
+* ~~Currently can mill pieces from other mills (to be fixed)~~ fixed
 
 ## Play
-Clone repository and run `cargo run`. Currently play is against a random player. 
+Clone repository and run `cargo run`. Currently play is against a random player.
 Change the second player to be `HumanInput` rather than random input to play against another human.
 See my [montyman repository](https://github.com/UsAndRufus/montyman) for a better bot.
 
