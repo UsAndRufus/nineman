@@ -107,7 +107,7 @@ impl Game {
         format!("P{} to {}:", player.id, mv)
     }
 
-    fn get_current_player_id(&self) -> i8 {
+    pub fn get_current_player_id(&self) -> i8 {
         self.current_player_id
     }
 
