@@ -16,7 +16,8 @@ impl HumanInput {
 
 impl InputHandler for HumanInput {
     // TODO: loop til valid
-    fn get_placement(&self) -> String {
+    fn get_placement(&self, available_places: Vec<String>) -> String {
+        println!("Can place at: {:?}", available_places);
         self.get_input()
     }
 

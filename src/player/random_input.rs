@@ -15,8 +15,8 @@ impl RandomInput {
 }
 
 impl InputHandler for RandomInput {
-    fn get_placement(&self) -> String {
-        self.get_node()
+    fn get_placement(&self, available_places: Vec<String>) -> String {
+        thread_rng().choose(&available_places).unwrap().to_string()
     }
 
     fn get_move(&self) -> (String, String) {

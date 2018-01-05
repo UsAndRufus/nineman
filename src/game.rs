@@ -90,7 +90,7 @@ impl Game {
 
         while !valid {
             println!("{}", self.render_current_move());
-            mv = player.make_move();
+            mv = player.get_move(self.board.available_places());
             valid = self.move_valid(&mv);
         }
 
