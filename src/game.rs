@@ -1,3 +1,6 @@
+use term_painter::Color::*;
+use term_painter::ToStyle;
+
 use board;
 use board::Board;
 use player::Player;
@@ -22,8 +25,11 @@ impl Game {
 
     pub fn print(&self) {
         self.board.print();
-        println!("P1: {}; P2: {}",
-            self.player1.get_pieces_left_to_place(), self.player2.get_pieces_left_to_place());
+        println!("P1: p: {}, s: {}; P2: p: {}, s: {}",
+            self.player1.get_pieces_left_to_place(),
+            self.player1.score(),
+            self.player2.get_pieces_left_to_place(),
+            self.player2.score());
     }
 
     pub fn game_loop(&mut self) -> i8 {
@@ -70,8 +76,14 @@ impl Game {
     fn end_game(&self) -> i8 {
         let winner = self.get_current_player();
         let loser = self.get_other_player();
-        println!("Congratulations, {}! You win with a score of {}", winner.name, winner.score());
-        println!("Commiserations, {}. You list with a score of {}", loser.name, loser.score());
+        let winner_name;
+        match winner.id {
+            1 => winner_name = Green.paint(winner.name.to_owned()),
+            2 => winner_name = Red.paint(winner.name.to_owned()),
+            _ => panic!("Unknown player id: {}", winner.id),
+        }
+        println!("Congratulations, {} (Player {})! You win with a score of {}", winner_name, winner.id, winner.score());
+        println!("Commiserations, {} (Player {}). You lose with a score of {}", loser.name, loser.id, loser.score());
 
         winner.id
     }

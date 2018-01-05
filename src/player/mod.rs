@@ -41,7 +41,7 @@ impl Player {
     }
 
     pub fn increment_score(&self) {
-        self.score.set(self.pieces_left_to_place.get() + 1);
+        self.score.set(self.score.get() + 1);
     }
 
     pub fn has_won(&self) -> bool {
