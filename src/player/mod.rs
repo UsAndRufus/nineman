@@ -9,8 +9,9 @@ pub use self::input_handler::InputHandler;
 pub use self::human_input::HumanInput;
 pub use self::random_input::RandomInput;
 
-const WIN_SCORE: i8 = 7;
-const STARTING_PIECES: i8 = 9;
+pub const WIN_SCORE: i8 = 7;
+pub const STARTING_SCORE: i8 = 0;
+pub const STARTING_PIECES: i8 = 9;
 
 pub struct Player {
     pub name: String,
@@ -22,8 +23,9 @@ pub struct Player {
 
 impl Player {
     pub fn new(name: String, id: i8, input_handler: Box<InputHandler>) -> Self {
-        Player { name: name, id: id, input_handler: input_handler, score: Cell::new(0),
-                 pieces_left_to_place: Cell::new(STARTING_PIECES) }
+        Player { name: name, id: id, input_handler: input_handler,
+                score: Cell::new(STARTING_SCORE),
+                pieces_left_to_place: Cell::new(STARTING_PIECES) }
     }
 
     pub fn mill(&self, available_mills: Vec<String>) -> String {

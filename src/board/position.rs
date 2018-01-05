@@ -4,7 +4,7 @@ use std::fmt;
 use board::Direction;
 use board::Direction::*;
 
-#[derive(Hash)]
+#[derive(Hash, Clone)]
 pub struct Position {
     // NB not using proper notation as it's a faff to work out with the way I'm generating the board
     pub id:    String,

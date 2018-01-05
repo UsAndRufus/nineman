@@ -18,6 +18,7 @@ pub use self::builder::build;
 
 // Idea for a list of indices borrowed from here: https://rust-leipzig.github.io/architecture/2016/12/20/idiomatic-trees-in-rust/
 
+#[derive(Clone)]
 pub struct Board {
     pub positions: Vec<Position>,
     pub ids_to_positions: HashMap<String, usize>,
