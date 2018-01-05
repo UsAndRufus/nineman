@@ -1,21 +1,25 @@
-use std::io;
+mod input_handler;
+pub mod human_input;
+
 use std::cell::Cell;
-use itertools::Itertools;
+use std::fmt;
+
+pub use self::input_handler::InputHandler;
 
 const WIN_SCORE: i8 = 1;
 const STARTING_PIECES: i8 = 3;
 
-#[derive(Debug)]
 pub struct Player {
     pub name: String,
     pub id: i8,
+    input_handler: Box<InputHandler>,
     score: Cell<i8>,
     pieces_left_to_place: Cell<i8>,
 }
 
 impl Player {
-    pub fn new(name: String, id: i8) -> Player {
-        Player { name: name, id: id, score: Cell::new(0),
+    pub fn new(name: String, id: i8, input_handler: Box<InputHandler>) -> Self {
+        Player { name: name, id: id, input_handler: input_handler, score: Cell::new(0),
                  pieces_left_to_place: Cell::new(STARTING_PIECES) }
     }
 
@@ -26,8 +30,7 @@ impl Player {
     }
 
     pub fn mill(&self) -> String {
-        println!("Mill! Select piece to destroy");
-        self.get_input()
+        self.input_handler.get_mill()
     }
 
     pub fn is_placement(&self) -> bool {
@@ -54,25 +57,22 @@ impl Player {
 
     fn get_move(&self) -> (String, String) {
         if self.is_placement() {
-            ("".to_string(), self.get_input())
+            ("".to_string(), self.input_handler.get_placement())
         } else {
-            loop {
-                match self.get_input().split(",").map(|m| m.to_string()).next_tuple() {
-                    Some(mv) => break mv,
-                    None => println!("Invalid move, must be in format 0n,0e"),
-                }
-            }
+            self.input_handler.get_move()
         }
-    }
-
-    fn get_input(&self) -> String {
-        let mut input = String::new();
-        io::stdin().read_line(&mut input)
-            .expect("Failed to read line");
-        input.trim().to_string().to_lowercase()
     }
 
     pub fn get_pieces_left_to_place(&self) -> i8 {
         self.pieces_left_to_place.get()
+    }
+}
+
+impl fmt::Debug for Player {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+
+        return write!(f, "Player {}: (name: {}, score: {}, pieces_left_to_place: {})",
+                        self.id, self.name, self.score.get(), self.pieces_left_to_place.get());
+
     }
 }

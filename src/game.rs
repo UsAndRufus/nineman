@@ -26,14 +26,6 @@ impl Game {
             self.player1.get_pieces_left_to_place(), self.player2.get_pieces_left_to_place());
     }
 
-    pub fn current_player(&self) -> &Player {
-        match self.current_player_id {
-            1 => &self.player1,
-            2 => &self.player2,
-            _ => panic!("Invalid player: {}", self.current_player_id),
-        }
-    }
-
     pub fn game_loop(&mut self) -> i8 {
         loop {
             self.print();
@@ -57,7 +49,7 @@ impl Game {
             self.board.print();
             let mut milled = false;
             while !milled {
-                let position = self.current_player().mill();
+                let position = self.get_current_player().mill();
                 milled = self.board.perform_mill(position, self.current_player_id);
             }
             self.get_current_player().increment_score();
@@ -71,7 +63,7 @@ impl Game {
 
         println!("from: {}, to: {}", from, to);
 
-        if self.current_player().is_placement() {
+        if self.get_current_player().is_placement() {
             if from.is_empty() {
                 self.board.place_piece(player_id, to);
                 self.get_current_player().place_piece();
@@ -91,7 +83,7 @@ impl Game {
     }
 
     fn get_move(&self) -> (String, String) {
-        let player = self.current_player();
+        let player = self.get_current_player();
 
         let mut mv = ("".to_string(), "".to_string());
         let mut valid = false;
@@ -105,7 +97,7 @@ impl Game {
         mv
     }
     fn render_current_move(&self) -> String {
-        let player = self.current_player();
+        let player = self.get_current_player();
 
         let mv;
         if player.is_placement() {
