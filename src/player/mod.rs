@@ -26,8 +26,8 @@ impl Player {
                  pieces_left_to_place: Cell::new(STARTING_PIECES) }
     }
 
-    pub fn mill(&self) -> String {
-        self.input_handler.get_mill()
+    pub fn mill(&self, available_mills: Vec<String>) -> String {
+        self.input_handler.get_mill(available_mills)
     }
 
     pub fn is_placement(&self) -> bool {

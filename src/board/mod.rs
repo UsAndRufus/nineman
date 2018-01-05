@@ -45,6 +45,10 @@ impl Board {
         self.positions.iter().filter(|p| p.is_empty()).map(|p| p.id.to_owned()).collect()
     }
 
+    pub fn available_mills(&self, id: i8) -> Vec<String> {
+        self.positions.iter().filter(|p| p.owned_by(id)).map(|p| p.id.to_owned()).collect()
+    }
+
     pub fn place_piece(&mut self, player_id: i8, piece_id: String) {
         let position = self.get_mut_position(piece_id);
         position.place(player_id);

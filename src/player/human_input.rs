@@ -31,8 +31,8 @@ impl InputHandler for HumanInput {
     }
 
     // TODO: move looping til correct mill to here
-    fn get_mill(&self) -> String {
-        println!("Mill! Select piece to destroy");
+    fn get_mill(&self, available_mills: Vec<String>) -> String {
+        println!("Mill! Select piece to destroy: {:?}", available_mills);
         self.get_input()
     }
 }

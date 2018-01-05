@@ -49,7 +49,8 @@ impl Game {
             self.board.print();
             let mut milled = false;
             while !milled {
-                let position = self.get_current_player().mill();
+                let other = self.get_other_player().id;
+                let position = self.get_current_player().mill(self.board.available_mills(other));
                 milled = self.board.perform_mill(position, self.current_player_id);
             }
             self.get_current_player().increment_score();

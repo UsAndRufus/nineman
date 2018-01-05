@@ -23,7 +23,7 @@ impl InputHandler for RandomInput {
         (self.get_node(), self.get_node())
     }
 
-    fn get_mill(&self) -> String {
-        self.get_node()
+    fn get_mill(&self, available_mills: Vec<String>) -> String {
+        thread_rng().choose(&available_mills).unwrap().to_string()
     }
 }
