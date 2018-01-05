@@ -12,3 +12,6 @@ See my [montyman repository](https://github.com/UsAndRufus/montyman) for a bette
 
 ## Pull requests
 Very much welcome, but be aware this is my first Rust project and is all done fairly hastily so I can write the bot.
+
+## crates.io
+I plan to add this to ()[crates.io] at some point, but should probably add tests. Also I am too busy with the bot to work out the procedure to publish to the repository!
