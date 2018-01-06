@@ -16,7 +16,7 @@ impl Human {
 }
 
 impl InputHandler for Human {
-    fn update_game(&self, game: &Game) {
+    fn update_game(&self, _game: &Game) {
         // Don't need to do anything
     }
 
@@ -56,5 +56,9 @@ impl InputHandler for Human {
             }
             println!("Invalid mill");
         }
+    }
+
+    fn to_string(&self) -> String {
+        "Human InputHandler".to_string()
     }
 }

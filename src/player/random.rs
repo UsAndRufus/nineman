@@ -6,7 +6,7 @@ use player::InputHandler;
 pub struct Random {}
 
 impl InputHandler for Random {
-    fn update_game(&self, game: &Game) {
+    fn update_game(&self, _game: &Game) {
         // Don't need to do anything
     }
 
@@ -20,5 +20,9 @@ impl InputHandler for Random {
 
     fn get_mill(&self, available_mills: Vec<String>) -> String {
         thread_rng().choose(&available_mills).unwrap().to_string()
+    }
+
+    fn to_string(&self) -> String {
+        "Random InputHandler".to_string()
     }
 }

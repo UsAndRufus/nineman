@@ -17,7 +17,7 @@ pub const STARTING_PIECES: i8 = 9;
 pub struct Player {
     pub name: String,
     pub id: i8,
-    input_handler: Box<InputHandler>,
+    pub input_handler: Box<InputHandler>,
     score: Cell<i8>,
     pieces_left_to_place: Cell<i8>,
 }
