@@ -6,7 +6,7 @@ use player::InputHandler;
 pub struct Random {}
 
 impl InputHandler for Random {
-    fn update_game_state(&mut self, _game_state: &GameState) {
+    fn update_game_state(&mut self, _game_state: GameState) {
         // Don't need to do anything
     }
 

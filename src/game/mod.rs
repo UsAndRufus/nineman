@@ -24,9 +24,10 @@ impl Game {
             player2: player2,
             current_player_id: 1,
         };
-        let game_state = GameState::from_game(&game);
-        game.player1.update_game_state(&game_state);
-        game.player2.update_game_state(&game_state);
+        let game_state_1 = GameState::from_game(&game);
+        let game_state_2 = GameState::from_game(&game);
+        game.player1.update_game_state(game_state_1);
+        game.player2.update_game_state(game_state_2);
         game
     }
 
@@ -59,7 +60,7 @@ impl Game {
 
     fn update_player(&mut self) {
         let game_state = GameState::from_game(&self);
-        self.get_current_player_mut().update_game_state(&game_state);
+        self.get_current_player_mut().update_game_state(game_state);
     }
 
     fn mill(&mut self) {

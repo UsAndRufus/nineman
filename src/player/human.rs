@@ -16,7 +16,7 @@ impl Human {
 }
 
 impl InputHandler for Human {
-    fn update_game_state(&mut self, _game_state: &GameState) {
+    fn update_game_state(&mut self, _game_state: GameState) {
         // Don't need to do anything
     }
 

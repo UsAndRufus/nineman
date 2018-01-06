@@ -33,7 +33,7 @@ impl Player {
         self.input_handler.get_mill(available_mills)
     }
 
-    pub fn update_game_state(&mut self, game_state: &GameState) {
+    pub fn update_game_state(&mut self, game_state: GameState) {
         self.input_handler.update_game_state(game_state);
     }
 
