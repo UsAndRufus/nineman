@@ -7,7 +7,7 @@ use player;
 use game::PlyType;
 use game::PlyType::*;
 
-#[derive(Clone)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct GameState {
     pub ply_to_get_here: PlyType,
     pub board: Board,
