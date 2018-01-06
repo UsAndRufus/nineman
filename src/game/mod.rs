@@ -1,6 +1,9 @@
 use term_painter::Color::*;
 use term_painter::ToStyle;
 
+mod game_state;
+
+pub use self::game_state::GameState;
 use board;
 use board::Board;
 use player::Player;
@@ -15,14 +18,15 @@ pub struct Game {
 
 impl Game {
     pub fn new(player1: Player, player2: Player) -> Self {
-        let game = Game {
+        let mut game = Game {
             board: board::build(),
             player1: player1,
             player2: player2,
             current_player_id: 1,
         };
-        game.player1.update_game(&game);
-        game.player2.update_game(&game);
+        let game_state = GameState::from_game(&game);
+        game.player1.update_game_state(&game_state);
+        game.player2.update_game_state(&game_state);
         game
     }
 
@@ -53,8 +57,9 @@ impl Game {
         self.end_game()
     }
 
-    fn update_player(&self) {
-        self.get_current_player().update_game(&self);
+    fn update_player(&mut self) {
+        let game_state = GameState::from_game(&self);
+        self.get_current_player_mut().update_game_state(&game_state);
     }
 
     fn mill(&mut self) {
@@ -118,6 +123,14 @@ impl Game {
 
     pub fn get_current_player_id(&self) -> i8 {
         self.current_player_id
+    }
+
+    pub fn get_current_player_mut(&mut self) -> &mut Player {
+        match self.current_player_id {
+            1 => &mut self.player1,
+            2 => &mut self.player2,
+            _ => panic!("Invalid player id: {}", self.current_player_id),
+        }
     }
 
     fn get_current_player(&self) -> &Player {

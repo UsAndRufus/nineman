@@ -8,7 +8,7 @@ use std::fmt;
 pub use self::input_handler::InputHandler;
 pub use self::human::Human;
 pub use self::random::Random;
-use game::Game;
+use game::GameState;
 
 pub const WIN_SCORE: i8 = 7;
 pub const STARTING_SCORE: i8 = 0;
@@ -33,8 +33,8 @@ impl Player {
         self.input_handler.get_mill(available_mills)
     }
 
-    pub fn update_game(&self, game: &Game) {
-        self.input_handler.update_game(game);
+    pub fn update_game_state(&mut self, game_state: &GameState) {
+        self.input_handler.update_game_state(game_state);
     }
 
     pub fn is_placement(&self) -> bool {

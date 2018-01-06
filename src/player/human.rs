@@ -1,7 +1,7 @@
 use std::io;
 use itertools::Itertools;
 
-use game::Game;
+use game::GameState;
 use player::InputHandler;
 
 pub struct Human {}
@@ -16,7 +16,7 @@ impl Human {
 }
 
 impl InputHandler for Human {
-    fn update_game(&self, _game: &Game) {
+    fn update_game_state(&mut self, _game_state: &GameState) {
         // Don't need to do anything
     }
 

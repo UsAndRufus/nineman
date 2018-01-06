@@ -1,12 +1,12 @@
 use rand::{thread_rng, Rng};
 
-use game::Game;
+use game::GameState;
 use player::InputHandler;
 
 pub struct Random {}
 
 impl InputHandler for Random {
-    fn update_game(&self, _game: &Game) {
+    fn update_game_state(&mut self, _game_state: &GameState) {
         // Don't need to do anything
     }
 
