@@ -2,8 +2,11 @@ use term_painter::Color::*;
 use term_painter::ToStyle;
 
 mod game_state;
+mod move_type;
 
 pub use self::game_state::GameState;
+pub use self::move_type::MoveType;
+
 use board;
 use board::Board;
 use player::Player;

@@ -4,7 +4,12 @@ use board::Board;
 use game::Game;
 use player;
 
+use game::MoveType;
+use game::MoveType::*;
+
+#[derive(Clone)]
 pub struct GameState {
+    pub move_to_get_here: MoveType,
     pub board: Board,
     pub current_player: i8,
     pub player1_score: i8,
@@ -16,6 +21,7 @@ pub struct GameState {
 impl GameState {
     pub fn from_game(game: &Game) -> Self {
         GameState {
+            move_to_get_here: Root,
             board: game.board.clone(),
             current_player: game.get_current_player_id(),
             player1_score: game.player1.score(),
@@ -26,19 +32,29 @@ impl GameState {
     }
 
     pub fn winner(&self) -> Option<i8> {
-        if self.player1_score >=  player::WIN_SCORE {
+        if self.player1_score >= player::WIN_SCORE {
             return Some(1);
         }
 
-        if self.player2_score >=  player::WIN_SCORE {
+        if self.player2_score >= player::WIN_SCORE {
             return Some(2);
         }
 
         None
     }
 
-    pub fn children(&self) -> Vec<Game> {
-        Vec::new()
+    // NB: only works for placement currently
+    pub fn children(&self) -> Vec<GameState> {
+        let player_id = self.current_player;
+        self.board.available_places().into_iter()
+            .map(|p| self.placement_child(player_id, p)).collect()
+    }
+
+    pub fn placement_child(&self, player_id: i8, piece_id: String) -> GameState {
+        let mut game_state = self.clone();
+        game_state.board.place_piece(player_id, piece_id.to_owned());
+        game_state.move_to_get_here = Placement{player_id, piece_id};
+        game_state
     }
 }
 
@@ -49,6 +65,5 @@ impl fmt::Debug for GameState {
                     self.current_player,
                     self.player1_score, self.player1_pieces_to_place,
                     self.player2_score, self.player2_pieces_to_place);
-
     }
 }
