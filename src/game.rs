@@ -15,12 +15,15 @@ pub struct Game {
 
 impl Game {
     pub fn new(player1: Player, player2: Player) -> Self {
-        Game {
+        let game = Game {
             board: board::build(),
             player1: player1,
             player2: player2,
             current_player_id: 1,
-        }
+        };
+        game.player1.update_game(&game);
+        game.player2.update_game(&game);
+        game
     }
 
     pub fn print(&self) {
@@ -51,7 +54,7 @@ impl Game {
     }
 
     fn update_player(&self) {
-        
+        self.get_current_player().update_game(&self);
     }
 
     fn mill(&mut self) {
