@@ -1,11 +1,12 @@
 use std::io;
 use itertools::Itertools;
 
+use game::Game;
 use player::InputHandler;
 
-pub struct HumanInput {}
+pub struct Human {}
 
-impl HumanInput {
+impl Human {
     fn get_input(&self) -> String {
         let mut input = String::new();
         io::stdin().read_line(&mut input)
@@ -14,7 +15,11 @@ impl HumanInput {
     }
 }
 
-impl InputHandler for HumanInput {
+impl InputHandler for Human {
+    fn update_game(&self, game: &Game) {
+        // Don't need to do anything
+    }
+
     fn get_placement(&self, available_places: Vec<String>) -> String {
         println!("Can place at: {:?}", available_places);
         loop {

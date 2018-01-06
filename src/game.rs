@@ -42,10 +42,16 @@ impl Game {
                 break
             }
 
+            self.update_player();
+
             self.switch_player();
         }
 
         self.end_game()
+    }
+
+    fn update_player(&self) {
+        
     }
 
     fn mill(&mut self) {

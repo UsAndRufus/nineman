@@ -7,7 +7,7 @@ Nine Men's Morris implementation in Rust.
 
 ## Play
 Clone repository and run `cargo run`. Currently play is against a random player.
-Change the second player to be `HumanInput` rather than random input to play against another human.
+Change the second player to be `Human` rather than `Random` to play against another human.
 See my [montyman repository](https://github.com/UsAndRufus/montyman) for a better bot.
 
 ## Pull requests

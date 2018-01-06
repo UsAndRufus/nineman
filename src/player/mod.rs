@@ -1,13 +1,14 @@
 mod input_handler;
-mod human_input;
-mod random_input;
+mod human;
+mod random;
 
 use std::cell::Cell;
 use std::fmt;
 
 pub use self::input_handler::InputHandler;
-pub use self::human_input::HumanInput;
-pub use self::random_input::RandomInput;
+pub use self::human::Human;
+pub use self::random::Random;
+use game::Game;
 
 pub const WIN_SCORE: i8 = 7;
 pub const STARTING_SCORE: i8 = 0;
@@ -30,6 +31,10 @@ impl Player {
 
     pub fn mill(&self, available_mills: Vec<String>) -> String {
         self.input_handler.get_mill(available_mills)
+    }
+
+    pub fn update_game(&self, game: &Game) {
+        self.input_handler.update_game(game);
     }
 
     pub fn is_placement(&self) -> bool {
