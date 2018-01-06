@@ -4,12 +4,12 @@ use board::Board;
 use game::Game;
 use player;
 
-use game::MoveType;
-use game::MoveType::*;
+use game::PlyType;
+use game::PlyType::*;
 
 #[derive(Clone)]
 pub struct GameState {
-    pub move_to_get_here: MoveType,
+    pub move_to_get_here: PlyType,
     pub board: Board,
     pub current_player: i8,
     pub player1_score: i8,

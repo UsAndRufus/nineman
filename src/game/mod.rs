@@ -2,10 +2,10 @@ use term_painter::Color::*;
 use term_painter::ToStyle;
 
 mod game_state;
-mod move_type;
+mod ply_type;
 
 pub use self::game_state::GameState;
-pub use self::move_type::MoveType;
+pub use self::ply_type::PlyType;
 
 use board;
 use board::Board;
