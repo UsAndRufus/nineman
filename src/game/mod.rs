@@ -27,10 +27,7 @@ impl Game {
             player2: player2,
             current_player_id: 1,
         };
-        let game_state_1 = GameState::from_game(&game);
-        let game_state_2 = GameState::from_game(&game);
-        game.player1.update_game_state(game_state_1);
-        game.player2.update_game_state(game_state_2);
+        game.update_game_states();
         game
     }
 
@@ -53,7 +50,7 @@ impl Game {
                 break
             }
 
-            self.update_player();
+            self.update_game_states();
 
             self.switch_player();
         }
@@ -61,9 +58,10 @@ impl Game {
         self.end_game()
     }
 
-    fn update_player(&mut self) {
+    fn update_game_states(&mut self) {
         let game_state = GameState::from_game(&self);
-        self.get_current_player_mut().update_game_state(game_state);
+        self.player1.update_game_state(game_state.clone());
+        self.player2.update_game_state(game_state);
     }
 
     fn mill(&mut self) {
