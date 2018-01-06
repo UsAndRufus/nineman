@@ -29,7 +29,7 @@ impl Player {
                 pieces_left_to_place: Cell::new(STARTING_PIECES) }
     }
 
-    pub fn mill(&self, available_mills: Vec<String>) -> String {
+    pub fn mill(&mut self, available_mills: Vec<String>) -> String {
         self.input_handler.get_mill(available_mills)
     }
 
@@ -44,6 +44,8 @@ impl Player {
     pub fn place_piece(&self) {
         if self.is_placement() {
             self.pieces_left_to_place.set(self.pieces_left_to_place.get() - 1);
+        } else {
+            panic!("Tried to place piece when it was not placement!");
         }
     }
 
@@ -59,12 +61,12 @@ impl Player {
         self.score.get()
     }
 
-    pub fn get_move(&self, available_moves: Vec<(String, String)>) -> (String, String) {
+    pub fn get_move(&mut self, available_moves: Vec<(String, String)>) -> (String, String) {
         assert!(!self.is_placement());
         self.input_handler.get_move(available_moves)
     }
 
-    pub fn get_placement(&self, available_places: Vec<String>) -> String {
+    pub fn get_placement(&mut self, available_places: Vec<String>) -> String {
         assert!(self.is_placement());
         self.input_handler.get_placement(available_places)
     }

@@ -10,15 +10,15 @@ impl InputHandler for Random {
         // Don't need to do anything
     }
 
-    fn get_placement(&self, available_places: Vec<String>) -> String {
+    fn get_placement(&mut self, available_places: Vec<String>) -> String {
         thread_rng().choose(&available_places).unwrap().to_string()
     }
 
-    fn get_move(&self, available_moves: Vec<(String, String)>) -> (String, String) {
+    fn get_move(&mut self, available_moves: Vec<(String, String)>) -> (String, String) {
         thread_rng().choose(&available_moves).unwrap().to_owned()
     }
 
-    fn get_mill(&self, available_mills: Vec<String>) -> String {
+    fn get_mill(&mut self, available_mills: Vec<String>) -> String {
         thread_rng().choose(&available_mills).unwrap().to_string()
     }
 

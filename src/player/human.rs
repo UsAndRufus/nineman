@@ -20,7 +20,7 @@ impl InputHandler for Human {
         // Don't need to do anything
     }
 
-    fn get_placement(&self, available_places: Vec<String>) -> String {
+    fn get_placement(&mut self, available_places: Vec<String>) -> String {
         println!("Can place at: {:?}", available_places);
         loop {
             let placement = self.get_input();
@@ -31,7 +31,7 @@ impl InputHandler for Human {
         }
     }
 
-    fn get_move(&self, available_moves: Vec<(String, String)>) -> (String, String) {
+    fn get_move(&mut self, available_moves: Vec<(String, String)>) -> (String, String) {
         loop {
             println!("Available moves: {:?}", available_moves);
             match self.get_input().split(",").map(|m| m.to_string()).next_tuple() {
@@ -47,7 +47,7 @@ impl InputHandler for Human {
     }
 
     // TODO: move looping til correct mill to here
-    fn get_mill(&self, available_mills: Vec<String>) -> String {
+    fn get_mill(&mut self, available_mills: Vec<String>) -> String {
         println!("Mill! Select piece to destroy: {:?}", available_mills);
         loop {
             let mill = self.get_input();

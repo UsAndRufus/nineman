@@ -70,7 +70,7 @@ impl Game {
         if can_mill {
             self.board.print();
             let available_mills = self.board.available_mills(self.get_other_player().id);
-            let position = self.get_current_player().mill(available_mills);
+            let position = self.get_current_player_mut().mill(available_mills);
             self.board.perform_mill(position, self.current_player_id);
             self.get_current_player().increment_score();
         }
@@ -80,7 +80,7 @@ impl Game {
         let player_id = self.get_current_player_id();
 
         if self.get_current_player().is_placement() {
-            let placement = self.get_current_player().get_placement(self.board.available_places());
+            let placement = self.get_placement();
             self.board.place_piece(player_id, placement);
             self.get_current_player().place_piece();
         } else {
@@ -104,10 +104,20 @@ impl Game {
         winner.id
     }
 
-    fn get_move(&self) -> (String, String) {
-        let player = self.get_current_player();
+    fn get_move(&mut self) -> (String, String) {
+        let available_moves = self.board.available_moves(self.current_player_id);
 
-        player.get_move(self.board.available_moves(player.id))
+        let player = self.get_current_player_mut();
+
+        player.get_move(available_moves)
+    }
+
+    fn get_placement(&mut self) -> String {
+        let available_places = self.board.available_places();
+
+        let player = self.get_current_player_mut();
+
+        player.get_placement(available_places)
     }
 
     fn render_current_move(&self) -> String {
