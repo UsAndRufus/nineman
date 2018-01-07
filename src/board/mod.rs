@@ -16,6 +16,8 @@ use self::direction::Direction;
 use self::mill::Mill;
 pub use self::builder::build;
 
+use game::switch_player_id;
+
 // Idea for a list of indices borrowed from here: https://rust-leipzig.github.io/architecture/2016/12/20/idiomatic-trees-in-rust/
 
 #[derive(Clone, Eq, PartialEq)]
@@ -24,6 +26,7 @@ pub struct Board {
     pub ids_to_positions: HashMap<String, usize>,
     p1_mills: HashSet<Mill>,
     p2_mills: HashSet<Mill>,
+    new_mills: HashSet<Mill>,
 }
 
 impl Board {
@@ -112,12 +115,16 @@ impl Board {
     }
 
     pub fn perform_mill(&mut self, id: String, from: i8) {
+        let available_mills = self.available_mills(from);
+        let available_mills_other = self.available_mills(switch_player_id(from));
+
         {
             let position = self.get_mut_position(id);
             if !position.is_empty() && !position.owned_by(from) {
                 position.remove();
             } else {
-                panic!("Invalid mill by player {}: {}", from, position.id);
+                panic!("Invalid mill by player {}: {}; available_mills: {:?}, available_mills_other: {:?}",
+                            from, position.id, available_mills, available_mills_other);
             }
         }
 
@@ -158,13 +165,20 @@ impl Board {
             }
         }
 
-        match new_mills.len() {
+        self.new_mills = new_mills;
+
+        self.can_mill()
+
+    }
+
+    pub fn can_mill(&self) -> bool {
+        match self.new_mills.len() {
             0 => false,
             1 => true,
             2 => true,
-            _ => panic!("Have somehow created {} this turn: {:?}", new_mills.len(), new_mills),
+            _ => panic!("Have somehow created {} this turn: {:?}",
+                            self.new_mills.len(), self.new_mills),
         }
-
     }
 
     fn find_mills(&self, player_id: i8) -> HashSet<Mill> {

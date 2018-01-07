@@ -188,10 +188,15 @@ impl Game {
     }
 
     fn switch_player(&mut self) {
-        match self.current_player_id {
-            1 => self.current_player_id = 2,
-            2 => self.current_player_id = 1,
-            _ => panic!("Invalid player id: {}", self.current_player_id),
-        }
+        let current_player_id = self.current_player_id;
+        self.current_player_id = switch_player_id(current_player_id);
+    }
+}
+
+pub fn switch_player_id(player_id: i8) -> i8 {
+    match player_id {
+        1 => 2,
+        2 => 1,
+        _ => panic!("invalid player_id {}", player_id),
     }
 }
