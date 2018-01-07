@@ -6,7 +6,7 @@ use nineman::player::Human;
 use nineman::player::Random;
 
 fn main() {
-    let p1 = Player::new(String::from("Dave"), 1, Box::new(Random {}));
+    let p1 = Player::new(String::from("Dave"), 1, Box::new(Human {}));
 
     let p2 = Player::new(String::from("Bertie"), 2, Box::new(Random {}));
 

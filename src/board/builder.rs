@@ -12,7 +12,6 @@ pub fn build() -> Board {
         ids_to_positions: HashMap::new(),
         p1_mills: HashSet::new(),
         p2_mills: HashSet::new(),
-        new_mills: HashSet::new(),
     };
 
     generate_positions(board)

@@ -74,7 +74,7 @@ impl GameState {
 
         match player_id {
             1 => game_state.player1_pieces_to_place -= 1,
-            2 => game_state.player1_pieces_to_place -= 1,
+            2 => game_state.player2_pieces_to_place -= 1,
             _ => panic!("Invalid player {}", player_id),
         }
 
@@ -109,20 +109,20 @@ impl GameState {
         game_state
     }
 
-    fn new_next_ply(&mut self) {
+    fn new_next_ply(&mut self, player_id: i8, can_mill: bool) {
         let ply;
         // check if mill, player_id same
-        if self.board.can_mill(self.current_player) {
-            ply = Mill {player_id: self.current_player, piece_id: "".to_string()};
+        if can_mill {
+            ply = Mill {player_id: player_id, piece_id: "".to_string()};
         // if not mill, work out if placement, player_id is switched
         } else {
-            let player_id = switch_player_id(self.current_player);
+            let other_player_id = switch_player_id(player_id);
 
-            if self.is_placement(player_id) {
-                ply = Placement {player_id: player_id, piece_id: "".to_string()};
+            if self.is_placement(other_player_id) {
+                ply = Placement {player_id: other_player_id, piece_id: "".to_string()};
                 // if not placement, must be move, player_id is switched
             } else {
-                ply = Move {player_id: player_id, mv: ("".to_string(), "".to_string())};
+                ply = Move {player_id: other_player_id, mv: ("".to_string(), "".to_string())};
             }
         }
 
@@ -137,13 +137,15 @@ impl GameState {
             _ => panic!("invalid player_id {}", player_id),
         }
 
+        assert!(pieces_left >= 0, "player_id: {}, pieces_left: {}", player_id, pieces_left);
+
         pieces_left > 0
     }
 }
 
 fn update_game_state(game_state: &mut GameState, player_id: i8) {
-    game_state.board.update_mills(player_id);
-    game_state.new_next_ply();
+    let can_mill = game_state.board.update_mills(player_id);
+    game_state.new_next_ply(player_id, can_mill);
     game_state.current_player = game_state.next_ply.player_id();
 }
 

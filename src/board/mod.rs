@@ -26,7 +26,6 @@ pub struct Board {
     pub ids_to_positions: HashMap<String, usize>,
     p1_mills: HashSet<Mill>,
     p2_mills: HashSet<Mill>,
-    new_mills: HashSet<Mill>,
 }
 
 impl Board {
@@ -54,8 +53,15 @@ impl Board {
         let all_positions: HashSet<String>
             = self.positions.iter().filter(|p| p.owned_by(id)).map(|p| p.id.to_owned()).collect();
 
+        let mills;
+        match id {
+            1 => mills = &self.p1_mills,
+            2 => mills = &self.p2_mills,
+            _ => panic!("Unknown player {}", id),
+        }
+
         let mut in_mills = HashSet::new();
-        for mill in &self.new_mills {
+        for mill in mills {
             in_mills.insert(self.get_id(Some(mill.first)));
             in_mills.insert(self.get_id(Some(mill.second)));
             in_mills.insert(self.get_id(Some(mill.third)));
@@ -163,21 +169,20 @@ impl Board {
             }
         }
 
-        self.new_mills = new_mills;
 
-        self.can_mill(player_id)
+        self.can_mill(player_id, new_mills)
 
     }
 
-    pub fn can_mill(&self, player_id: i8) -> bool {
-        match self.new_mills.len() {
+    pub fn can_mill(&self, player_id: i8, new_mills: HashSet<Mill>) -> bool {
+        match new_mills.len() {
             0 => false,
             1 => true,
             2 => true,
             _ => {
                 self.print();
                 panic!("Have somehow created {} mills this turn for player {}: {}",
-                    self.new_mills.len(), player_id, self.mills_string(&self.new_mills));
+                    new_mills.len(), player_id, self.mills_string(&new_mills));
             },
         }
     }
