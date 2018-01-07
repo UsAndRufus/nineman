@@ -20,4 +20,11 @@ impl Ply {
             Move{ref player_id, ..} => player_id.to_owned(),
         }
     }
+
+    pub fn is_mill(&self) -> bool {
+        match *self {
+            Mill{..} => true,
+            _ => false,
+        }
+    }
 }

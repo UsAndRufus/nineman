@@ -54,15 +54,8 @@ impl Board {
         let all_positions: HashSet<String>
             = self.positions.iter().filter(|p| p.owned_by(id)).map(|p| p.id.to_owned()).collect();
 
-        let mills;
-        match id {
-            1 => mills = &self.p1_mills,
-            2 => mills = &self.p2_mills,
-            _ => panic!("Unknown player {}", id),
-        }
-
         let mut in_mills = HashSet::new();
-        for mill in mills {
+        for mill in &self.new_mills {
             in_mills.insert(self.get_id(Some(mill.first)));
             in_mills.insert(self.get_id(Some(mill.second)));
             in_mills.insert(self.get_id(Some(mill.third)));
@@ -155,10 +148,14 @@ impl Board {
         match player_id {
             1 => {
                 new_mills = mills.difference(&self.p1_mills).map(|t| *t).collect();
+                //println!("found mills: {}", self.mills_string(&mills));
+                //println!("p1_mills (old): {}", self.mills_string(&self.p1_mills));
                 self.p1_mills = mills;
             },
             2 => {
                 new_mills = mills.difference(&self.p2_mills).map(|t| *t).collect();
+                //println!("found mills: {}", self.mills_string(&mills));
+                //println!("p2_mills (old): {}", self.mills_string(&self.p2_mills));
                 self.p2_mills = mills;
             },
             _ => {
@@ -168,18 +165,37 @@ impl Board {
 
         self.new_mills = new_mills;
 
-        self.can_mill()
+        self.can_mill(player_id)
 
     }
 
-    pub fn can_mill(&self) -> bool {
+    pub fn can_mill(&self, player_id: i8) -> bool {
         match self.new_mills.len() {
             0 => false,
             1 => true,
             2 => true,
-            _ => panic!("Have somehow created {} this turn: {:?}",
-                            self.new_mills.len(), self.new_mills),
+            _ => {
+                self.print();
+                panic!("Have somehow created {} mills this turn for player {}: {}",
+                    self.new_mills.len(), player_id, self.mills_string(&self.new_mills));
+            },
         }
+    }
+
+    fn mills_string(&self, mills: &HashSet<Mill>) -> String {
+        let mut mills_string = String::new();
+
+        for mill in mills {
+            mills_string.push_str(
+                &format!("({},{},{})",
+                    self.positions.get(mill.first).unwrap().id,
+                    self.positions.get(mill.second).unwrap().id,
+                    self.positions.get(mill.third).unwrap().id,
+                )
+            );
+        }
+
+        mills_string
     }
 
     fn find_mills(&self, player_id: i8) -> HashSet<Mill> {
@@ -187,7 +203,7 @@ impl Board {
         for layer in 0..3 {
             for side in Direction::iterator() {
                 if let Some(mill) = self.find_mill_for_side(player_id, layer, side) {
-                    println!("Mill found for {}: {}", player_id, self.mill_str(&mill));
+                    //println!("Mill found for {}: {}", player_id, self.mill_str(&mill));
                     mills.insert(mill);
                 }
             }
@@ -195,7 +211,7 @@ impl Board {
 
         for cross_section in Direction::iterator() {
             if let Some(mill) = self.find_mill_for_cross_section(player_id, cross_section) {
-                println!("Mill found for {}: {}", player_id, self.mill_str(&mill));
+                //println!("Mill found for {}: {}", player_id, self.mill_str(&mill));
                 mills.insert(mill);
             }
         }

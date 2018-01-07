@@ -46,7 +46,6 @@ impl GameState {
         None
     }
 
-    // NB: only works for placement currently
     pub fn children(&self) -> Vec<GameState> {
         assert!(self.next_ply.player_id() == self.current_player, "next_ply.player_id() should be same as current_player");
         let current_player_id = self.current_player;
@@ -73,6 +72,12 @@ impl GameState {
 
         update_game_state(&mut game_state, player_id);
 
+        match player_id {
+            1 => game_state.player1_pieces_to_place -= 1,
+            2 => game_state.player1_pieces_to_place -= 1,
+            _ => panic!("Invalid player {}", player_id),
+        }
+
         game_state
     }
 
@@ -83,6 +88,12 @@ impl GameState {
         game_state.ply_to_get_here = Mill {player_id, piece_id};
 
         update_game_state(&mut game_state, player_id);
+
+        match player_id {
+            1 => game_state.player1_score += 1,
+            2 => game_state.player2_score += 1,
+            _ => panic!("Invalid player {}", player_id),
+        }
 
         game_state
     }
@@ -101,7 +112,7 @@ impl GameState {
     fn new_next_ply(&mut self) {
         let ply;
         // check if mill, player_id same
-        if self.board.can_mill() {
+        if self.board.can_mill(self.current_player) {
             ply = Mill {player_id: self.current_player, piece_id: "".to_string()};
         // if not mill, work out if placement, player_id is switched
         } else {
@@ -139,7 +150,8 @@ fn update_game_state(game_state: &mut GameState, player_id: i8) {
 impl fmt::Debug for GameState {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 
-        return write!(f, "GameState(current_player: {}; p1: (s:{},p:{}), p2: (s:{},p:{}))",
+        return write!(f, "GameState(ply_to_get_here: {:?}, next_ply: {:?}, current_player: {}; p1: (s:{},p:{}), p2: (s:{},p:{}))",
+                    self.ply_to_get_here, self.next_ply,
                     self.current_player,
                     self.player1_score, self.player1_pieces_to_place,
                     self.player2_score, self.player2_pieces_to_place);
