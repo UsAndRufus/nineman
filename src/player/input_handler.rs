@@ -6,4 +6,5 @@ pub trait InputHandler {
     fn get_move(&mut self, available_moves: Vec<(String, String)>) -> (String, String);
     fn get_mill(&mut self, available_mills: Vec<String>) -> String;
     fn to_string(&self) -> String;
+    fn set_player_id(&mut self, player_id: i8);
 }

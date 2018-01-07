@@ -17,7 +17,7 @@ pub const STARTING_PIECES: i8 = 9;
 pub struct Player {
     pub name: String,
     pub id: i8,
-    pub input_handler: Box<InputHandler>,
+    input_handler: Box<InputHandler>,
     score: Cell<i8>,
     pieces_left_to_place: Cell<i8>,
 }
@@ -35,6 +35,10 @@ impl Player {
 
     pub fn update_game_state(&mut self, game_state: GameState) {
         self.input_handler.update_game_state(game_state);
+    }
+
+    pub fn set_input_handler_player_id(&mut self, player_id: i8) {
+        self.input_handler.set_player_id(player_id);
     }
 
     pub fn is_placement(&self) -> bool {

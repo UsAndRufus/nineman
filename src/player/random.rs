@@ -25,4 +25,8 @@ impl InputHandler for Random {
     fn to_string(&self) -> String {
         "Random InputHandler".to_string()
     }
+
+    fn set_player_id(&mut self, _player_id: i8) {
+        // Don't need to do anything
+    }
 }

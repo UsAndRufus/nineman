@@ -28,6 +28,8 @@ impl Game {
             current_player_id: 1,
         };
         game.update_game_states();
+        game.player1.set_input_handler_player_id(1);
+        game.player2.set_input_handler_player_id(2);
         game
     }
 
