@@ -4,12 +4,12 @@ use board::Board;
 use game::Game;
 use player;
 
-use game::PlyType;
-use game::PlyType::*;
+use game::Ply;
+use game::Ply::*;
 
 #[derive(Clone, Eq, PartialEq)]
 pub struct GameState {
-    pub ply_to_get_here: PlyType,
+    pub ply_to_get_here: Ply,
     pub board: Board,
     pub current_player: i8,
     pub player1_score: i8,
