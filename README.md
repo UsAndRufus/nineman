@@ -11,8 +11,9 @@ Change the second player to be `Human` rather than `Random` to play against anot
 See my [montyman repository](https://github.com/UsAndRufus/montyman) for a better bot.
 
 ## Issues
-* When using `montyman`, occasionally 3 mills will be created on a turn, even though I don't think that's possible
-* Separation of concerns isn't great between `nineman` and `montyman`
+* When using `montyman`, occasionally 3 mills will be created on a turn, even though I don't think that's possible (should panic but currently ignored)
+* When using `montyman`, at the end of placement phase the bot will have a GameState where the placement_pieces are -1 (should panic but currently ignored)
+* Separation of concerns isn't great between `nineman` and `montyman` (as you can probably see from the above issues)
 * Available moves methods should probably return Vecs of `Ply`s
 
 ## Pull requests

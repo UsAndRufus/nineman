@@ -61,7 +61,7 @@ impl Player {
         if other_player_placement {
             self.score.get() >= WIN_SCORE
         } else {
-            other_player_available_moves.is_empty() 
+            other_player_available_moves.is_empty()
         }
     }
 

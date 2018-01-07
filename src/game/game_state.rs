@@ -70,13 +70,13 @@ impl GameState {
         game_state.board.place_piece(player_id, piece_id.to_owned());
         game_state.ply_to_get_here = Placement {player_id, piece_id};
 
-        update_game_state(&mut game_state, player_id);
-
         match player_id {
             1 => game_state.player1_pieces_to_place -= 1,
             2 => game_state.player2_pieces_to_place -= 1,
             _ => panic!("Invalid player {}", player_id),
         }
+
+        update_game_state(&mut game_state, player_id);
 
         game_state
     }
@@ -87,13 +87,14 @@ impl GameState {
         game_state.board.perform_mill(piece_id.to_owned(), player_id);
         game_state.ply_to_get_here = Mill {player_id, piece_id};
 
-        update_game_state(&mut game_state, player_id);
 
         match player_id {
             1 => game_state.player1_score += 1,
             2 => game_state.player2_score += 1,
             _ => panic!("Invalid player {}", player_id),
         }
+
+        update_game_state(&mut game_state, player_id);
 
         game_state
     }
@@ -137,7 +138,11 @@ impl GameState {
             _ => panic!("invalid player_id {}", player_id),
         }
 
-        assert!(pieces_left >= 0, "player_id: {}, pieces_left: {}", player_id, pieces_left);
+        // if (pieces_left < 0) {
+        //     self.board.print();
+        //     println!("{:?}", self);
+        //     panic!("player_id: {}, pieces_left: {}", player_id, pieces_left);
+        // }
 
         pieces_left > 0
     }
