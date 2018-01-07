@@ -35,7 +35,7 @@ impl GameState {
     }
 
     pub fn winner(&self) -> Option<i8> {
-        if self.player1_score >= player::WIN_SCORE {
+        if (self.player1_score >= player::WIN_SCORE) {
             return Some(1);
         }
 

@@ -18,6 +18,7 @@ pub use self::builder::build;
 
 use game::switch_player_id;
 
+
 // Idea for a list of indices borrowed from here: https://rust-leipzig.github.io/architecture/2016/12/20/idiomatic-trees-in-rust/
 
 #[derive(Clone, Eq, PartialEq)]
@@ -181,8 +182,10 @@ impl Board {
             2 => true,
             _ => {
                 self.print();
-                panic!("Have somehow created {} mills this turn for player {}: {}",
+                // FIXME: should be panicking here as we shouldn't be able to create 3 mills in a turn!!
+                println!("DANGER: Have somehow created {} mills this turn for player {}: {}",
                     new_mills.len(), player_id, self.mills_string(&new_mills));
+                true
             },
         }
     }
