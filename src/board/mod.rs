@@ -49,6 +49,7 @@ impl Board {
         self.positions.iter().filter(|p| p.is_empty()).map(|p| p.id.to_owned()).collect()
     }
 
+    // id is who is being milled, not who is doing the milling
     pub fn available_mills(&self, id: i8) -> Vec<String> {
         let all_positions: HashSet<String>
             = self.positions.iter().filter(|p| p.owned_by(id)).map(|p| p.id.to_owned()).collect();
@@ -115,8 +116,8 @@ impl Board {
     }
 
     pub fn perform_mill(&mut self, id: String, from: i8) {
-        let available_mills = self.available_mills(from);
-        let available_mills_other = self.available_mills(switch_player_id(from));
+        let available_mills = self.available_mills(switch_player_id(from));
+        let available_mills_other = self.available_mills(from);
 
         {
             let position = self.get_mut_position(id);

@@ -59,7 +59,7 @@ impl GameState {
                     self.board.available_moves(current_player_id).into_iter()
                         .map(|m| self.move_child(current_player_id, m)).collect(),
             Mill{..} =>
-                    self.board.available_mills(current_player_id).into_iter()
+                    self.board.available_mills(switch_player_id(current_player_id)).into_iter()
                         .map(|m| self.mill_child(current_player_id, m)).collect(),
             _ => panic!("Found Ply::{:?}", self.next_ply),
         }
