@@ -57,8 +57,12 @@ impl Player {
         self.score.set(self.score.get() + 1);
     }
 
-    pub fn has_won(&self) -> bool {
-        self.score.get() >= WIN_SCORE
+    pub fn has_won(&self, other_player_available_moves: Vec<(String,String)>, other_player_placement: bool) -> bool {
+        if other_player_placement {
+            self.score.get() >= WIN_SCORE
+        } else {
+            other_player_available_moves.is_empty() 
+        }
     }
 
     pub fn score(&self) -> i8 {

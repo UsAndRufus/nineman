@@ -48,7 +48,9 @@ impl Game {
             self.make_move();
             self.mill();
 
-            if self.get_current_player().has_won() {
+            if self.get_current_player().has_won(
+                    self.board.available_moves(switch_player_id(self.current_player_id)),
+                    self.get_other_player().is_placement()) {
                 break
             }
 
