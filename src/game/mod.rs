@@ -52,18 +52,37 @@ impl Game {
                 break
             }
 
-            self.update_game_states();
-
             self.switch_player();
+
+            self.update_game_states();
         }
 
         self.end_game()
     }
 
     fn update_game_states(&mut self) {
-        let game_state = GameState::from_game(&self);
-        self.player1.update_game_state(game_state.clone());
-        self.player2.update_game_state(game_state);
+        self.update_game_state_for(1);
+        self.update_game_state_for(2);
+    }
+
+    fn update_game_state_for(&mut self, player_id: i8) {
+        let next_ply = self.next_ply();
+        let game_state = GameState::from_game(&self, next_ply);
+
+        let player = self.get_player_mut(player_id);
+        player.update_game_state(game_state);
+
+    }
+
+    // Whenever we update, it will be after a mill so we don't need to bother with Mill plies
+    // piece_ids are just "" because they are unknown so far
+    fn next_ply(&self) -> Ply {
+        let player_id = self.current_player_id;
+        if self.get_current_player().is_placement() {
+            Ply::Placement {player_id: player_id, piece_id: "".to_string()}
+        } else {
+            Ply::Move {player_id: player_id, mv: ("".to_string(),"".to_string())}
+        }
     }
 
     fn mill(&mut self) {
@@ -139,12 +158,17 @@ impl Game {
         self.current_player_id
     }
 
-    pub fn get_current_player_mut(&mut self) -> &mut Player {
-        match self.current_player_id {
+    pub fn get_player_mut(&mut self, player_id: i8) -> &mut Player {
+        match player_id {
             1 => &mut self.player1,
             2 => &mut self.player2,
             _ => panic!("Invalid player id: {}", self.current_player_id),
         }
+    }
+
+    pub fn get_current_player_mut(&mut self) -> &mut Player {
+        let player_id = self.current_player_id;
+        self.get_player_mut(player_id)
     }
 
     fn get_current_player(&self) -> &Player {

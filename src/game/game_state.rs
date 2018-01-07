@@ -10,6 +10,7 @@ use game::Ply::*;
 #[derive(Clone, Eq, PartialEq)]
 pub struct GameState {
     pub ply_to_get_here: Ply,
+    pub next_ply: Ply, // NB ignore specific move here, just ply type and player_id. Is this bad? maybe. Or maybe blank piece_ids just mean unknown
     pub board: Board,
     pub current_player: i8,
     pub player1_score: i8,
@@ -19,9 +20,10 @@ pub struct GameState {
 }
 
 impl GameState {
-    pub fn from_game(game: &Game) -> Self {
+    pub fn from_game(game: &Game, next_ply: Ply) -> Self {
         GameState {
             ply_to_get_here: Root,
+            next_ply: next_ply,
             board: game.board.clone(),
             current_player: game.get_current_player_id(),
             player1_score: game.player1.score(),
@@ -50,6 +52,8 @@ impl GameState {
             .map(|p| self.placement_child(player_id, p)).collect()
     }
 
+    // need to switch player_id, unless next state is a mill
+    // need to update mills too
     pub fn placement_child(&self, player_id: i8, piece_id: String) -> GameState {
         let mut game_state = self.clone();
         game_state.board.place_piece(player_id, piece_id.to_owned());
