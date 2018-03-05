@@ -37,8 +37,8 @@ impl Game {
     pub fn game_loop(&mut self) -> i8 {
         loop {
             self.print();
-            self.make_move();
-            self.mill();
+            self.current_state = self.make_move();
+            self.current_state = self.mill();
 
             if self.current_state.current_player_has_won() {
                 break
@@ -57,47 +57,30 @@ impl Game {
 
     // TODO: this should just pass current state
     fn update_input_handler_for(&mut self, player_id: i8) {
-        let next_ply = self.next_ply();
-        let game_state = GameState::from_game(&self, next_ply);
-
         let player = self.get_player_mut(player_id);
-        player.give_new_game_state(game_state);
-
+        player.give_new_game_state(self.current_state);
     }
 
-    // Whenever we update, it will be after a mill so we don't need to bother with Mill plies
-    // piece_ids are just "" because they are unknown so far
-    fn next_ply(&self) -> Ply {
-        let player_id = self.get_current_player_id();
-        if self.get_current_player().is_placement() {
-            Ply::Placement {player_id: player_id, piece_id: "".to_string()}
-        } else {
-            Ply::Move {player_id: player_id, mv: ("".to_string(),"".to_string())}
-        }
-    }
-
-    fn mill(&mut self) {
-        let can_mill = self.board.update_mills(self.get_current_player_id());
-
-        if can_mill {
-            self.board.print();
-            let available_mills = self.board.available_mills(self.get_other_player().id);
+    fn mill(&mut self) -> GameState {
+        if self.current_state.can_current_player_mill() {
+            self.board().print();
+            let available_mills = self.board().available_mills(self.get_other_player_id());
             let position = self.get_current_player_mut().mill(available_mills);
-            self.board.perform_mill(position, self.get_current_player_id());
-            self.get_current_player().increment_score();
+            self.current_state.mill_piece(self.get_current_player_id(), position)
+        } else {
+            self.current_state
         }
     }
 
-    fn make_move(&mut self) {
+    fn make_move(&mut self) -> GameState {
         let player_id = self.get_current_player_id();
 
-        if self.get_current_player().is_placement() {
+        if self.current_state.current_player_state().is_placement() {
             let placement = self.get_placement();
-            self.board.place_piece(player_id, placement);
-            self.get_current_player().place_piece();
+            self.current_state.place_piece(player_id, placement)
         } else {
-            let (from, to) = self.get_move();
-            self.board.move_piece(player_id, from, to);
+            let mv = self.get_move();
+            self.current_state.move_piece(player_id, mv)
         }
     }
 
@@ -150,6 +133,11 @@ impl Game {
         self.current_state.current_player_id
     }
 
+    pub fn get_other_player_id(&self) -> i8 {
+        switch_player_id(self.current_state.current_player_id)
+    }
+
+    // TODO: shouldn't need to mutate player now
     pub fn get_player_mut(&mut self, player_id: i8) -> &mut Player {
         match player_id {
             1 => &mut self.player1,

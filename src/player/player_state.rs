@@ -6,6 +6,7 @@ pub const STARTING_SCORE: i8 = 0;
 pub const STARTING_PIECES: i8 = 9;
 
 // TODO: get rid of cells and just make it return new playerstates after updates
+#[derive(Clone, Eq, PartialEq)]
 pub struct PlayerState {
     score: Cell<i8>,
     pieces_left_to_place: Cell<i8>,
@@ -49,7 +50,7 @@ impl PlayerState {
         self.score.get()
     }
 
-    pub fn get_pieces_left_to_place(&self) -> i8 {
+    pub fn pieces_left_to_place(&self) -> i8 {
         self.pieces_left_to_place.get()
     }
 }
