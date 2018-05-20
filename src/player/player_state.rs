@@ -33,17 +33,16 @@ impl PlayerState {
     }
 
     pub fn increment_score(&self) {
-        self.score.set(self.score.get() + 1);
+        let current_score = self.score.get();
+        self.score.set(current_score + 1);
+        println!("Player now has {} points", self.score.get());
     }
 
-    // TODO: is this correct??
     pub fn has_won(&self, other_player_available_moves: Vec<(String,String)>,
                     other_player_placement: bool) -> bool {
-        if other_player_placement {
-            self.score.get() >= WIN_SCORE
-        } else {
-            other_player_available_moves.is_empty()
-        }
+
+        self.score.get() >= WIN_SCORE ||
+        (!other_player_placement && other_player_available_moves.is_empty())
     }
 
     pub fn score(&self) -> i8 {

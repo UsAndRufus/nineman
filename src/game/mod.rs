@@ -93,13 +93,13 @@ impl Game {
         let winner_name;
         match winner.id {
             1 => winner_name = Green.paint(winner.name.to_owned()),
-            2 => winner_name = Red.paint(winner.name.to_owned()),
+            2 => winner_name = Blue.paint(winner.name.to_owned()),
             _ => panic!("Unknown player id: {}", winner.id),
         }
         // println!("Congratulations, {} (Player {})! You win with a score of {}", winner_name, winner.id, winner.score());
         // println!("Commiserations, {} (Player {}). You lose with a score of {}", loser.name, loser.id, loser.score());
-        println!("Congratulations, {} (Player {})! You win with a score of x", winner_name, winner.id);
-        println!("Commiserations, {} (Player {}). You lose with a score of y", loser.name, loser.id);
+        println!("Congratulations, {} (Player {})! You win with a score of {}", winner_name, winner.id, self.current_state.player_score(winner.id));
+        println!("Commiserations, {} (Player {}). You lose with a score of {}", loser.name, loser.id, self.current_state.player_score(loser.id));
 
         winner.id
     }

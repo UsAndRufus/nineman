@@ -78,7 +78,7 @@ impl GameState {
         game_state.board.perform_mill(piece_id.to_owned(), player_id);
         game_state.ply_to_get_here = Mill {player_id, piece_id};
 
-        self.player_state(player_id).increment_score();
+        game_state.player_state(player_id).increment_score();
 
         give_new_game_state(&mut game_state, player_id);
 
@@ -142,6 +142,10 @@ impl GameState {
         self.player_state(other_id)
     }
 
+    pub fn player_score(&self, player_id: i8) -> i8 {
+        self.player_state(player_id).score()
+    }
+
     pub fn print(&self) {
         self.board.print();
         println!("P1: p: {}, s: {}; P2: p: {}, s: {}",
@@ -152,7 +156,7 @@ impl GameState {
     }
 }
 
-// TODO: this seems a bit weird but maybe MontyMan is using it. Would be better as a pseudoconstructor returning a GameState I think
+// TODO: Would be better as a pseudoconstructor returning a GameState I think
 fn give_new_game_state(game_state: &mut GameState, player_id: i8) {
     let can_mill = game_state.can_mill_next(player_id);
     game_state.new_next_ply(player_id, can_mill);
