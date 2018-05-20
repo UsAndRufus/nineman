@@ -57,8 +57,9 @@ impl Game {
 
     // TODO: this should just pass current state
     fn update_input_handler_for(&mut self, player_id: i8) {
+        let game_state = self.current_state.clone();
         let player = self.get_player_mut(player_id);
-        player.give_new_game_state(self.current_state);
+        player.give_new_game_state(game_state);
     }
 
     fn mill(&mut self) -> GameState {
@@ -68,7 +69,7 @@ impl Game {
             let position = self.get_current_player_mut().mill(available_mills);
             self.current_state.mill_piece(self.get_current_player_id(), position)
         } else {
-            self.current_state
+            self.current_state.clone()
         }
     }
 
@@ -167,8 +168,8 @@ impl Game {
         }
     }
 
-    fn board(&mut self) -> Board {
-        self.current_state.board
+    fn board(&self) -> &Board {
+        &self.current_state.board
     }
 }
 

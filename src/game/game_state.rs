@@ -96,11 +96,12 @@ impl GameState {
         game_state
     }
 
-    pub fn can_current_player_mill(&self) -> bool {
-        self.can_mill(self.current_player_id)
+    pub fn can_current_player_mill(&mut self) -> bool {
+        let player_id = self.current_player_id; 
+        self.can_mill(player_id)
     }
 
-    pub fn can_mill(&self, player_id: i8) -> bool {
+    pub fn can_mill(&mut self, player_id: i8) -> bool {
         self.board.update_mills(player_id)
     }
 
