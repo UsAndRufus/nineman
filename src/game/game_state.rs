@@ -65,7 +65,7 @@ impl GameState {
         game_state.board.place_piece(player_id, piece_id.to_owned());
         game_state.ply_to_get_here = Placement {player_id, piece_id};
 
-        self.player_state(player_id).place_piece();
+        game_state.player_state(player_id).place_piece();
 
         give_new_game_state(&mut game_state, player_id);
 
@@ -97,7 +97,7 @@ impl GameState {
     }
 
     pub fn can_current_player_mill(&mut self) -> bool {
-        let player_id = self.current_player_id; 
+        let player_id = self.current_player_id;
         self.can_mill(player_id)
     }
 
