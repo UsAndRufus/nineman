@@ -25,7 +25,7 @@ impl GameState {
         GameState {
             board: board::build(),
             ply_to_get_here: Root,
-            next_ply: Root, // TODO can't remember what this does - might need fixing
+            next_ply: Root,
             current_player_id: 1,
             player1_state: PlayerState::at_beginning(),
             player2_state: PlayerState::at_beginning(),
@@ -44,7 +44,7 @@ impl GameState {
     pub fn children(&self) -> Vec<GameState> {
         assert!(self.next_ply.player_id() == self.current_player_id, "next_ply.player_id() should be same as current_player");
 
-        // TODO: make all these calls to self.current_player_id just be in the methods?
+        // Could make all these calls to self.current_player_id just be in the methods?
         match self.next_ply {
             Placement{..} =>
                     self.board.available_places().into_iter()
@@ -65,7 +65,8 @@ impl GameState {
         game_state.board.place_piece(player_id, piece_id.to_owned());
         game_state.ply_to_get_here = Placement {player_id, piece_id};
 
-        game_state.player_state(player_id).place_piece();
+        let new_player_state = game_state.player_state(player_id).place_piece();
+        game_state.update_player_state(player_id, new_player_state);
 
         give_new_game_state(&mut game_state, player_id);
 
@@ -78,7 +79,8 @@ impl GameState {
         game_state.board.perform_mill(piece_id.to_owned(), player_id);
         game_state.ply_to_get_here = Mill {player_id, piece_id};
 
-        game_state.player_state(player_id).increment_score();
+        let new_player_state = game_state.player_state(player_id).increment_score();
+        game_state.update_player_state(player_id, new_player_state);
 
         give_new_game_state(&mut game_state, player_id);
 
@@ -142,6 +144,14 @@ impl GameState {
         self.player_state(other_id)
     }
 
+    fn update_player_state(&mut self, player_id: i8, player_state: PlayerState) {
+        match player_id {
+            1 => self.player1_state = player_state,
+            2 => self.player2_state = player_state,
+            _ => panic!("Invalid player_id {}", player_id),
+        }
+    }
+
     pub fn player_score(&self, player_id: i8) -> i8 {
         self.player_state(player_id).score()
     }
@@ -156,7 +166,7 @@ impl GameState {
     }
 }
 
-// TODO: Would be better as a pseudoconstructor returning a GameState I think
+// Could be better returning a GameState but doesn't make a huge difference
 fn give_new_game_state(game_state: &mut GameState, player_id: i8) {
     let can_mill = game_state.can_mill_next(player_id);
     game_state.new_next_ply(player_id, can_mill);

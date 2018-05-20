@@ -46,7 +46,6 @@ impl InputHandler for Human {
         }
     }
 
-    // TODO: move looping til correct mill to here
     fn get_mill(&mut self, available_mills: Vec<String>) -> String {
         println!("Mill! Select piece to destroy: {:?}", available_mills);
         loop {

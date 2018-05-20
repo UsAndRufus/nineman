@@ -56,7 +56,6 @@ impl Game {
         self.update_input_handler_for(2);
     }
 
-    // TODO: this should just pass current state
     fn update_input_handler_for(&mut self, player_id: i8) {
         let game_state = self.current_state.clone();
         let player = self.get_player_mut(player_id);
@@ -87,7 +86,6 @@ impl Game {
         }
     }
 
-    // TODO: print the proper score
     fn end_game(&self) -> i8 {
         let winner = self.get_current_player();
         let loser = self.get_other_player();
@@ -97,8 +95,7 @@ impl Game {
             2 => winner_name = Blue.paint(winner.name.to_owned()),
             _ => panic!("Unknown player id: {}", winner.id),
         }
-        // println!("Congratulations, {} (Player {})! You win with a score of {}", winner_name, winner.id, winner.score());
-        // println!("Commiserations, {} (Player {}). You lose with a score of {}", loser.name, loser.id, loser.score());
+
         println!("Congratulations, {} (Player {})! You win with a score of {}", winner_name, winner.id, self.current_state.player_score(winner.id));
         println!("Commiserations, {} (Player {}). You lose with a score of {}", loser.name, loser.id, self.current_state.player_score(loser.id));
 
