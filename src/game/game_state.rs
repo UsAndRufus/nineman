@@ -98,10 +98,10 @@ impl GameState {
 
     pub fn can_current_player_mill(&mut self) -> bool {
         let player_id = self.current_player_id;
-        self.can_mill(player_id)
+        self.next_ply.is_mill() && (self.next_ply.player_id() == player_id)
     }
 
-    pub fn can_mill(&mut self, player_id: i8) -> bool {
+    pub fn can_mill_next(&mut self, player_id: i8) -> bool {
         self.board.update_mills(player_id)
     }
 
@@ -154,7 +154,7 @@ impl GameState {
 
 // TODO: this seems a bit weird but maybe MontyMan is using it. Would be better as a pseudoconstructor returning a GameState I think
 fn give_new_game_state(game_state: &mut GameState, player_id: i8) {
-    let can_mill = game_state.can_mill(player_id);
+    let can_mill = game_state.can_mill_next(player_id);
     game_state.new_next_ply(player_id, can_mill);
     game_state.current_player_id = game_state.next_ply.player_id();
 }

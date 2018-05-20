@@ -73,6 +73,7 @@ impl Game {
         }
     }
 
+    // TODO: maybe start passing in current_state rather than modifying it directly
     fn make_move(&mut self) -> GameState {
         let player_id = self.get_current_player_id();
 
