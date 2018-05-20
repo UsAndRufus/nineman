@@ -7,108 +7,82 @@ mod ply;
 pub use self::game_state::GameState;
 pub use self::ply::Ply;
 
-use board;
-use board::Board;
 use player::Player;
+use board::Board;
 
 #[derive(Debug)]
 pub struct Game {
-    pub board: Board,
+    pub current_state: GameState,
     pub player1: Player,
     pub player2: Player,
-    current_player_id: i8,
 }
 
 impl Game {
     pub fn new(player1: Player, player2: Player) -> Self {
         let mut game = Game {
-            board: board::build(),
+            current_state: GameState::at_beginning(),
             player1: player1,
             player2: player2,
-            current_player_id: 1,
         };
-        game.update_game_states();
+        game.update_input_handlers();
         game.player1.set_input_handler_player_id(1);
         game.player2.set_input_handler_player_id(2);
         game
     }
 
     pub fn print(&self) {
-        self.board.print();
-        println!("P1: p: {}, s: {}; P2: p: {}, s: {}",
-            self.player1.get_pieces_left_to_place(),
-            self.player1.score(),
-            self.player2.get_pieces_left_to_place(),
-            self.player2.score());
+        self.current_state.print();
     }
 
     pub fn game_loop(&mut self) -> i8 {
         loop {
             self.print();
-            self.make_move();
-            self.mill();
+            self.current_state = self.make_move();
+            self.current_state = self.mill();
 
-            if self.get_current_player().has_won(
-                    self.board.available_moves(switch_player_id(self.current_player_id)),
-                    self.get_other_player().is_placement()) {
+            // Have to check for last player by this point the players have swappeds
+            if self.current_state.last_player_has_won() {
                 break
             }
 
-            self.switch_player();
-
-            self.update_game_states();
+            self.update_input_handlers();
         }
 
         self.end_game()
     }
 
-    fn update_game_states(&mut self) {
-        self.update_game_state_for(1);
-        self.update_game_state_for(2);
+    fn update_input_handlers(&mut self) {
+        self.update_input_handler_for(1);
+        self.update_input_handler_for(2);
     }
 
-    fn update_game_state_for(&mut self, player_id: i8) {
-        let next_ply = self.next_ply();
-        let game_state = GameState::from_game(&self, next_ply);
-
+    fn update_input_handler_for(&mut self, player_id: i8) {
+        let game_state = self.current_state.clone();
         let player = self.get_player_mut(player_id);
-        player.update_game_state(game_state);
-
+        player.give_new_game_state(game_state);
     }
 
-    // Whenever we update, it will be after a mill so we don't need to bother with Mill plies
-    // piece_ids are just "" because they are unknown so far
-    fn next_ply(&self) -> Ply {
-        let player_id = self.current_player_id;
-        if self.get_current_player().is_placement() {
-            Ply::Placement {player_id: player_id, piece_id: "".to_string()}
-        } else {
-            Ply::Move {player_id: player_id, mv: ("".to_string(),"".to_string())}
-        }
-    }
-
-    fn mill(&mut self) {
-        let can_mill = self.board.update_mills(self.current_player_id);
-
-        if can_mill {
-            self.board.print();
-            let available_mills = self.board.available_mills(self.get_other_player().id);
+    fn mill(&mut self) -> GameState {
+        if self.current_state.can_current_player_mill() {
+            self.board().print();
+            let available_mills = self.board().available_mills(self.get_other_player_id());
             let position = self.get_current_player_mut().mill(available_mills);
-            self.board.perform_mill(position, self.current_player_id);
-            self.get_current_player().increment_score();
+            self.current_state.mill_piece(self.get_current_player_id(), position)
+        } else {
+            self.current_state.clone()
         }
     }
 
-    fn make_move(&mut self) {
+    // TODO: maybe start passing in current_state rather than modifying it directly
+    fn make_move(&mut self) -> GameState {
         let player_id = self.get_current_player_id();
 
-        if self.get_current_player().is_placement() {
+        if self.current_state.current_player_state().is_placement() {
             let placement = self.get_placement();
-            self.board.place_piece(player_id, placement);
-            self.get_current_player().place_piece();
+            self.current_state.place_piece(player_id, placement)
         } else {
-            let (from, to) = self.get_move();
-            self.board.move_piece(player_id, from, to);
+            let mv = self.get_move();
+            self.current_state.move_piece(player_id, mv)
         }
     }
 
@@ -118,17 +92,18 @@ impl Game {
         let winner_name;
         match winner.id {
             1 => winner_name = Green.paint(winner.name.to_owned()),
-            2 => winner_name = Red.paint(winner.name.to_owned()),
+            2 => winner_name = Blue.paint(winner.name.to_owned()),
             _ => panic!("Unknown player id: {}", winner.id),
         }
-        println!("Congratulations, {} (Player {})! You win with a score of {}", winner_name, winner.id, winner.score());
-        println!("Commiserations, {} (Player {}). You lose with a score of {}", loser.name, loser.id, loser.score());
+
+        println!("Congratulations, {} (Player {})! You win with a score of {}", winner_name, winner.id, self.current_state.player_score(winner.id));
+        println!("Commiserations, {} (Player {}). You lose with a score of {}", loser.name, loser.id, self.current_state.player_score(loser.id));
 
         winner.id
     }
 
     fn get_move(&mut self) -> (String, String) {
-        let available_moves = self.board.available_moves(self.current_player_id);
+        let available_moves = self.board().available_moves(self.get_current_player_id());
 
         let player = self.get_current_player_mut();
 
@@ -136,7 +111,7 @@ impl Game {
     }
 
     fn get_placement(&mut self) -> String {
-        let available_places = self.board.available_places();
+        let available_places = self.board().available_places();
 
         let player = self.get_current_player_mut();
 
@@ -144,54 +119,56 @@ impl Game {
     }
 
     fn render_current_move(&self) -> String {
-        let player = self.get_current_player();
-
         let mv;
-        if player.is_placement() {
+        if self.current_state.current_player_state().is_placement() {
             mv = "place";
         } else {
             mv = "move";
         }
 
-        format!("P{} to {}:", player.id, mv)
+        format!("P{} to {}:", self.get_current_player_id(), mv)
     }
 
     pub fn get_current_player_id(&self) -> i8 {
-        self.current_player_id
+        self.current_state.current_player_id
     }
 
+    pub fn get_other_player_id(&self) -> i8 {
+        switch_player_id(self.current_state.current_player_id)
+    }
+
+    // TODO: shouldn't need to mutate player now
     pub fn get_player_mut(&mut self, player_id: i8) -> &mut Player {
         match player_id {
             1 => &mut self.player1,
             2 => &mut self.player2,
-            _ => panic!("Invalid player id: {}", self.current_player_id),
+            _ => panic!("Invalid player id: {}", self.get_current_player_id()),
         }
     }
 
     pub fn get_current_player_mut(&mut self) -> &mut Player {
-        let player_id = self.current_player_id;
+        let player_id = self.get_current_player_id();
         self.get_player_mut(player_id)
     }
 
     fn get_current_player(&self) -> &Player {
-        match self.current_player_id {
+        match self.get_current_player_id() {
             1 => &self.player1,
             2 => &self.player2,
-            _ => panic!("Invalid player id: {}", self.current_player_id),
+            _ => panic!("Invalid player id: {}", self.get_current_player_id()),
         }
     }
 
     fn get_other_player(&self) -> &Player {
-        match self.current_player_id {
+        match self.get_current_player_id() {
             2 => &self.player1,
             1 => &self.player2,
-            _ => panic!("Invalid player id: {}", self.current_player_id),
+            _ => panic!("Invalid player id: {}", self.get_current_player_id()),
         }
     }
 
-    fn switch_player(&mut self) {
-        let current_player_id = self.current_player_id;
-        self.current_player_id = switch_player_id(current_player_id);
+    fn board(&self) -> &Board {
+        &self.current_state.board
     }
 }
 
