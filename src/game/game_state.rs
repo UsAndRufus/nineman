@@ -32,13 +32,13 @@ impl GameState {
         }
     }
 
-    pub fn current_player_has_won(&self) -> bool {
-        let current_player_state = self.current_player_state();
-        let other_player_state = self.other_player_state();
+    pub fn last_player_has_won(&self) -> bool {
+        let new_player_state = self.current_player_state();
+        let last_player_state = self.other_player_state();
 
-        current_player_state.has_won(
-                self.board.available_moves(switch_player_id(self.current_player_id)),
-                other_player_state.is_placement())
+        last_player_state.has_won(
+                self.board.available_moves(self.current_player_id), // moves for new/current player
+                new_player_state.is_placement())
     }
 
     pub fn children(&self) -> Vec<GameState> {

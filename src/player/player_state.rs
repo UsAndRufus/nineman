@@ -35,7 +35,6 @@ impl PlayerState {
     pub fn increment_score(&self) {
         let current_score = self.score.get();
         self.score.set(current_score + 1);
-        println!("Player now has {} points", self.score.get());
     }
 
     pub fn has_won(&self, other_player_available_moves: Vec<(String,String)>,
