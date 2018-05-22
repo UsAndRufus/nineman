@@ -37,7 +37,10 @@ impl Game {
     pub fn game_loop(&mut self) -> i8 {
         loop {
             self.print();
+
             self.current_state = self.make_move();
+            self.update_input_handlers();
+
             self.current_state = self.mill();
 
             // Have to check for last player by this point the players have swappeds
