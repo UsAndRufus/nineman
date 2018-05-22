@@ -1,5 +1,6 @@
 use game::GameState;
 
+// TODO: maybe make InputHandler return Plys instead?
 pub trait InputHandler {
     fn give_new_game_state(&mut self, game: GameState);
     fn get_placement(&mut self, available_places: Vec<String>) -> String;

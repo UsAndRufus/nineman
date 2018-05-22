@@ -79,9 +79,6 @@ impl GameState {
         game_state.board.perform_mill(piece_id.to_owned(), player_id);
         game_state.ply_to_get_here = Mill {player_id, piece_id};
 
-        let new_player_state = game_state.player_state(player_id).increment_score();
-        game_state.update_player_state(player_id, new_player_state);
-
         give_new_game_state(&mut game_state, player_id);
 
         game_state
@@ -171,6 +168,12 @@ fn give_new_game_state(game_state: &mut GameState, player_id: i8) {
     let can_mill = game_state.can_mill_next(player_id);
     game_state.new_next_ply(player_id, can_mill);
     game_state.current_player_id = game_state.next_ply.player_id();
+
+    // If this is a placement/move that leads to a mill, increment the score
+    if can_mill {
+        let new_player_state = game_state.player_state(player_id).increment_score();
+        game_state.update_player_state(player_id, new_player_state);
+    }
 }
 
 impl fmt::Debug for GameState {
