@@ -1,4 +1,5 @@
 use term_painter::Color::*;
+use term_painter::Painted;
 use term_painter::ToStyle;
 
 mod game_state;
@@ -90,19 +91,23 @@ impl Game {
     }
 
     fn end_game(&self) -> i8 {
-        let winner = self.get_current_player();
-        let loser = self.get_other_player();
-        let winner_name;
-        match winner.id {
-            1 => winner_name = Green.paint(winner.name.to_owned()),
-            2 => winner_name = Blue.paint(winner.name.to_owned()),
-            _ => panic!("Unknown player id: {}", winner.id),
-        }
+        let winner = self.get_other_player();
+        let loser = self.get_current_player();
 
-        println!("Congratulations, {} (Player {})! You win with a score of {}", winner_name, winner.id, self.current_state.player_score(winner.id));
-        println!("Commiserations, {} (Player {}). You lose with a score of {}", loser.name, loser.id, self.current_state.player_score(loser.id));
+        println!("\nCongratulations, {} 🎉 (Player {})! You win with a score of {}",
+            self.colour_player(winner), winner.id, self.current_state.player_score(winner.id));
+        println!("Commiserations, {} 😞 (Player {}). You lose with a score of {}",
+            self.colour_player(loser), loser.id, self.current_state.player_score(loser.id));
 
         winner.id
+    }
+
+    fn colour_player(&self, player: &Player) -> Painted<String> {
+        match player.id {
+            1 => Green.paint(player.name.to_owned()),
+            2 => Blue.paint(player.name.to_owned()),
+            _ => panic!("Unknown player id: {}", player.id),
+        }
     }
 
     fn get_move(&mut self) -> (String, String) {
