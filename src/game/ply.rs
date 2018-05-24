@@ -21,6 +21,21 @@ impl Ply {
         }
     }
 
+    pub fn piece_id(&self) -> String {
+        match *self {
+            Placement{ref piece_id, ..} => piece_id.to_owned(),
+            Mill{ref piece_id, ..} => piece_id.to_owned(),
+            _ => panic!("Ply does not contain field piece_id!"),
+        }
+    }
+
+    pub fn mv(&self) -> (String, String) {
+        match *self {
+            Move{ref mv, ..} => mv.to_owned(),
+            _ => panic!("Ply is not a move!"),
+        }
+    }
+
     pub fn is_mill(&self) -> bool {
         match *self {
             Mill{..} => true,

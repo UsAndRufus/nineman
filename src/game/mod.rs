@@ -44,7 +44,7 @@ impl Game {
 
             self.current_state = self.mill();
 
-            // Have to check for last player by this point the players have swappeds
+            // Have to check for last player as by this point the players have swapped
             if self.current_state.last_player_has_won() {
                 break
             }
@@ -69,9 +69,10 @@ impl Game {
     fn mill(&mut self) -> GameState {
         if self.current_state.can_current_player_mill() {
             self.board().print();
-            let available_mills = self.board().available_mills(self.get_other_player_id());
-            let position = self.get_current_player_mut().mill(available_mills);
-            self.current_state.mill_piece(self.get_current_player_id(), position)
+            let available_mills = self.board()
+                .available_mills(self.get_current_player_id(), self.get_other_player_id());
+            let mill_ply = self.get_current_player_mut().mill(available_mills);
+            self.current_state.mill_piece(mill_ply)
         } else {
             self.current_state.clone()
         }
@@ -83,10 +84,10 @@ impl Game {
 
         if self.current_state.current_player_state().is_placement() {
             let placement = self.get_placement();
-            self.current_state.place_piece(player_id, placement)
+            self.current_state.place_piece(placement)
         } else {
             let mv = self.get_move();
-            self.current_state.move_piece(player_id, mv)
+            self.current_state.move_piece(mv)
         }
     }
 
@@ -110,7 +111,7 @@ impl Game {
         }
     }
 
-    fn get_move(&mut self) -> (String, String) {
+    fn get_move(&mut self) -> Ply {
         let available_moves = self.board().available_moves(self.get_current_player_id());
 
         let player = self.get_current_player_mut();
@@ -118,8 +119,8 @@ impl Game {
         player.get_move(available_moves)
     }
 
-    fn get_placement(&mut self) -> String {
-        let available_places = self.board().available_places();
+    fn get_placement(&mut self) -> Ply {
+        let available_places = self.board().available_places(self.get_current_player_id());
 
         let player = self.get_current_player_mut();
 
@@ -145,7 +146,6 @@ impl Game {
         switch_player_id(self.current_state.current_player_id)
     }
 
-    // TODO: shouldn't need to mutate player now
     pub fn get_player_mut(&mut self, player_id: i8) -> &mut Player {
         match player_id {
             1 => &mut self.player1,

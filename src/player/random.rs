@@ -1,6 +1,7 @@
 use rand::{thread_rng, Rng};
 
 use game::GameState;
+use game::Ply;
 use player::InputHandler;
 
 pub struct Random {}
@@ -10,16 +11,26 @@ impl InputHandler for Random {
         // Don't need to do anything
     }
 
-    fn get_placement(&mut self, available_places: Vec<String>) -> String {
-        thread_rng().choose(&available_places).unwrap().to_string()
+    fn get_placement(&mut self, available_places: Vec<Ply>) -> Ply {
+
+        match thread_rng().choose(&available_places) {
+            Some(ply) => ply.to_owned(),
+            None => panic!("In placement phase and no places to choose from")
+        }
     }
 
-    fn get_move(&mut self, available_moves: Vec<(String, String)>) -> (String, String) {
-        thread_rng().choose(&available_moves).unwrap().to_owned()
+    fn get_move(&mut self, available_moves: Vec<Ply>) -> Ply {
+        match thread_rng().choose(&available_moves) {
+            Some(ply) => ply.to_owned(),
+            None => panic!("In move phase and no moves to choose from")
+        }
     }
 
-    fn get_mill(&mut self, available_mills: Vec<String>) -> String {
-        thread_rng().choose(&available_mills).unwrap().to_string()
+    fn get_mill(&mut self, available_mills: Vec<Ply>) -> Ply {
+        match thread_rng().choose(&available_mills) {
+            Some(ply) => ply.to_owned(),
+            None => panic!("In mill phase and no mills to choose from")
+        }
     }
 
     fn to_string(&self) -> String {

@@ -47,50 +47,52 @@ impl GameState {
         // Could make all these calls to self.current_player_id just be in the methods?
         match self.next_ply {
             Placement{..} =>
-                    self.board.available_places().into_iter()
-                        .map(|p| self.place_piece(self.current_player_id, p)).collect(),
+                    self.board.available_places(self.current_player_id).into_iter()
+                        .map(|p| self.place_piece(p)).collect(),
             Move{..} =>
                     self.board.available_moves(self.current_player_id).into_iter()
-                        .map(|m| self.move_piece(self.current_player_id, m)).collect(),
+                        .map(|m| self.move_piece(m)).collect(),
             Mill{..} =>
-                    self.board.available_mills(switch_player_id(self.current_player_id)).into_iter()
-                        .map(|m| self.mill_piece(self.current_player_id, m)).collect(),
+                    self.board.available_mills(self.current_player_id, switch_player_id(self.current_player_id)).into_iter()
+                        .map(|m| self.mill_piece(m)).collect(),
             _ => panic!("Found Ply::{:?}", self.next_ply),
         }
     }
 
-    pub fn place_piece(&self, player_id: i8, piece_id: String) -> GameState {
+    pub fn place_piece(&self, placement_ply: Ply) -> GameState {
         let mut game_state = self.clone();
 
-        game_state.board.place_piece(player_id, piece_id.to_owned());
-        game_state.ply_to_get_here = Placement {player_id, piece_id};
+        game_state.board.place_piece(placement_ply.clone());
+        game_state.ply_to_get_here = placement_ply;
+
+        let player_id = game_state.ply_to_get_here.player_id();
 
         let new_player_state = game_state.player_state(player_id).place_piece();
         game_state.update_player_state(player_id, new_player_state);
 
-        give_new_game_state(&mut game_state, player_id);
+        give_new_game_state(&mut game_state);
 
         game_state
     }
 
-    pub fn mill_piece(&self, player_id: i8, piece_id: String) -> GameState {
+    pub fn mill_piece(&self, mill_ply: Ply) -> GameState {
         let mut game_state = self.clone();
 
-        game_state.board.perform_mill(piece_id.to_owned(), player_id);
-        game_state.ply_to_get_here = Mill {player_id, piece_id};
+        game_state.board.perform_mill(mill_ply.clone());
+        game_state.ply_to_get_here = mill_ply;
 
-        give_new_game_state(&mut game_state, player_id);
+        give_new_game_state(&mut game_state);
 
         game_state
     }
 
-    pub fn move_piece(&self, player_id: i8, mv: (String, String)) -> GameState {
+    pub fn move_piece(&self, move_ply: Ply) -> GameState {
         let mut game_state = self.clone();
 
-        game_state.board.move_piece(player_id, mv.0.to_owned(), mv.1.to_owned());
-        game_state.ply_to_get_here = Move {player_id, mv};
+        game_state.board.move_piece(move_ply.clone());
+        game_state.ply_to_get_here = move_ply;
 
-        give_new_game_state(&mut game_state, player_id);
+        give_new_game_state(&mut game_state);
 
         game_state
     }
@@ -164,7 +166,8 @@ impl GameState {
 }
 
 // Could be better returning a GameState but doesn't make a huge difference
-fn give_new_game_state(game_state: &mut GameState, player_id: i8) {
+fn give_new_game_state(game_state: &mut GameState) {
+    let player_id = game_state.ply_to_get_here.player_id();
     let can_mill = game_state.can_mill_next(player_id);
     game_state.new_next_ply(player_id, can_mill);
     game_state.current_player_id = game_state.next_ply.player_id();
