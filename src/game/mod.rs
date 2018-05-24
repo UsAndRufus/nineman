@@ -44,7 +44,7 @@ impl Game {
 
             self.current_state = self.mill();
 
-            // Have to check for last player by this point the players have swappeds
+            // Have to check for last player as by this point the players have swapped
             if self.current_state.last_player_has_won() {
                 break
             }
