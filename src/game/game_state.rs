@@ -62,15 +62,15 @@ impl GameState {
     pub fn place_piece(&self, placement_ply: Ply) -> GameState {
         let mut game_state = self.clone();
 
-        game_state.board.place_piece(placement_ply);
+        game_state.board.place_piece(placement_ply.clone());
         game_state.ply_to_get_here = placement_ply;
 
-        let player_id = placement_ply.player_id();
+        let player_id = game_state.ply_to_get_here.player_id();
 
         let new_player_state = game_state.player_state(player_id).place_piece();
         game_state.update_player_state(player_id, new_player_state);
 
-        give_new_game_state(&mut game_state, player_id);
+        give_new_game_state(&mut game_state);
 
         game_state
     }
@@ -78,10 +78,10 @@ impl GameState {
     pub fn mill_piece(&self, mill_ply: Ply) -> GameState {
         let mut game_state = self.clone();
 
-        game_state.board.perform_mill(mill_ply);
+        game_state.board.perform_mill(mill_ply.clone());
         game_state.ply_to_get_here = mill_ply;
 
-        give_new_game_state(&mut game_state, mill_ply.player_id());
+        give_new_game_state(&mut game_state);
 
         game_state
     }
@@ -89,10 +89,10 @@ impl GameState {
     pub fn move_piece(&self, move_ply: Ply) -> GameState {
         let mut game_state = self.clone();
 
-        game_state.board.move_piece(move_ply);
+        game_state.board.move_piece(move_ply.clone());
         game_state.ply_to_get_here = move_ply;
 
-        give_new_game_state(&mut game_state, move_ply.player_id());
+        give_new_game_state(&mut game_state);
 
         game_state
     }
@@ -166,7 +166,8 @@ impl GameState {
 }
 
 // Could be better returning a GameState but doesn't make a huge difference
-fn give_new_game_state(game_state: &mut GameState, player_id: i8) {
+fn give_new_game_state(game_state: &mut GameState) {
+    let player_id = game_state.ply_to_get_here.player_id();
     let can_mill = game_state.can_mill_next(player_id);
     game_state.new_next_ply(player_id, can_mill);
     game_state.current_player_id = game_state.next_ply.player_id();
