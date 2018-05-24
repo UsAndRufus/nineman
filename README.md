@@ -10,7 +10,7 @@ Clone repository and run `cargo run`. Currently play is against a random player.
 Change the second player to be `Human` rather than `Random` to play against another human.
 See my [greedyman repository](https://github.com/UsAndRufus/greedyman) for a better bot, and my [montyman repository](https://github.com/UsAndRufus/montyman) for a "better" bot that doesn't really work (you have to use `v0.2.1` for montyman too).
 
-##Issues
+## Issues
 
 ### montyman (only works with v0.2.1)
 * When using `montyman`, occasionally 3 mills will be created on a turn, even though I don't think that's possible (should panic but currently ignored)
