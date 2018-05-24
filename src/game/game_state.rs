@@ -51,7 +51,7 @@ impl GameState {
                         .map(|p| self.place_piece(p)).collect(),
             Move{..} =>
                     self.board.available_moves(self.current_player_id).into_iter()
-                        .map(|m| self.move_piece(self.current_player_id, m)).collect(),
+                        .map(|m| self.move_piece(m)).collect(),
             Mill{..} =>
                     self.board.available_mills(switch_player_id(self.current_player_id)).into_iter()
                         .map(|m| self.mill_piece(self.current_player_id, m)).collect(),
@@ -86,13 +86,13 @@ impl GameState {
         game_state
     }
 
-    pub fn move_piece(&self, player_id: i8, mv: (String, String)) -> GameState {
+    pub fn move_piece(&self, move_ply: Ply) -> GameState {
         let mut game_state = self.clone();
 
-        game_state.board.move_piece(player_id, mv.0.to_owned(), mv.1.to_owned());
-        game_state.ply_to_get_here = Move {player_id, mv};
+        game_state.board.move_piece(move_ply);
+        game_state.ply_to_get_here = move_ply;
 
-        give_new_game_state(&mut game_state, player_id);
+        give_new_game_state(&mut game_state, move_ply.player_id());
 
         game_state
     }

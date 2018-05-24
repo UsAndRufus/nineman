@@ -36,12 +36,10 @@ impl Player {
         self.input_handler.set_player_id(player_id);
     }
 
-    // NB used to be assert!(!self.is_placement()) before PlayerState
     pub fn get_move(&mut self, available_moves: Vec<Ply>) -> Ply {
         self.input_handler.get_move(available_moves)
     }
 
-    // NB used to be assert!(!self.is_placement()) before PlayerState
     pub fn get_placement(&mut self, available_places: Vec<Ply>) -> Ply {
         self.input_handler.get_placement(available_places)
     }
@@ -49,8 +47,6 @@ impl Player {
 
 impl fmt::Debug for Player {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-
-        return write!(f, "Player {} ({})", self.id, self.name);
-
+        write!(f, "Player {} ({})", self.id, self.name)
     }
 }

@@ -83,15 +83,19 @@ impl Board {
         }
     }
 
-    pub fn available_moves(&self, id: i8) -> Vec<(String, String)> {
-        let owned: Vec<&Position> = self.positions.iter().filter(|p| p.owned_by(id)).collect();
+    pub fn available_moves(&self, player_id: i8) -> Vec<Ply> {
+        let owned: Vec<&Position>
+            = self.positions.iter()
+                .filter(|p| p.owned_by(player_id))
+                .collect();
 
         let mut available_moves = Vec::new();
         for position in owned {
             for c in position.connections() {
                 let connection = self.positions.get(*c).unwrap();
                 if connection.is_empty() {
-                    available_moves.push((position.id.to_owned(), connection.id.to_owned()));
+                    let mv = (position.id.to_owned(), connection.id.to_owned());
+                    available_moves.push(Move { player_id: player_id, mv: mv });
                 }
             }
         }
@@ -104,7 +108,9 @@ impl Board {
         position.place(placement_ply.player_id());
     }
 
-    pub fn move_piece(&mut self, player_id: i8, from_id: String, to_id: String) {
+    pub fn move_piece(&mut self, move_ply: Ply) {
+        // TODO: make this compile lol
+        player_id: i8, from_id: String, to_id: String
         let can_move;
         {
             let from = self.get_position(&from_id);

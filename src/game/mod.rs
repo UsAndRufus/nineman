@@ -83,10 +83,10 @@ impl Game {
 
         if self.current_state.current_player_state().is_placement() {
             let placement = self.get_placement();
-            self.current_state.place_piece(player_id, placement)
+            self.current_state.place_piece(placement)
         } else {
             let mv = self.get_move();
-            self.current_state.move_piece(player_id, mv)
+            self.current_state.move_piece(mv)
         }
     }
 
@@ -110,7 +110,7 @@ impl Game {
         }
     }
 
-    fn get_move(&mut self) -> (String, String) {
+    fn get_move(&mut self) -> Ply {
         let available_moves = self.board().available_moves(self.get_current_player_id());
 
         let player = self.get_current_player_mut();
@@ -118,7 +118,7 @@ impl Game {
         player.get_move(available_moves)
     }
 
-    fn get_placement(&mut self) -> String {
+    fn get_placement(&mut self) -> Ply {
         let available_places = self.board().available_places(self.get_current_player_id());
 
         let player = self.get_current_player_mut();
