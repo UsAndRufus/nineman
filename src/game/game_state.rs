@@ -53,8 +53,8 @@ impl GameState {
                     self.board.available_moves(self.current_player_id).into_iter()
                         .map(|m| self.move_piece(m)).collect(),
             Mill{..} =>
-                    self.board.available_mills(switch_player_id(self.current_player_id)).into_iter()
-                        .map(|m| self.mill_piece(self.current_player_id, m)).collect(),
+                    self.board.available_mills(self.current_player_id, switch_player_id(self.current_player_id)).into_iter()
+                        .map(|m| self.mill_piece(m)).collect(),
             _ => panic!("Found Ply::{:?}", self.next_ply),
         }
     }
@@ -75,13 +75,13 @@ impl GameState {
         game_state
     }
 
-    pub fn mill_piece(&self, player_id: i8, piece_id: String) -> GameState {
+    pub fn mill_piece(&self, mill_ply: Ply) -> GameState {
         let mut game_state = self.clone();
 
-        game_state.board.perform_mill(piece_id.to_owned(), player_id);
-        game_state.ply_to_get_here = Mill {player_id, piece_id};
+        game_state.board.perform_mill(mill_ply);
+        game_state.ply_to_get_here = mill_ply;
 
-        give_new_game_state(&mut game_state, player_id);
+        give_new_game_state(&mut game_state, mill_ply.player_id());
 
         game_state
     }

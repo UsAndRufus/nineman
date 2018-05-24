@@ -69,9 +69,10 @@ impl Game {
     fn mill(&mut self) -> GameState {
         if self.current_state.can_current_player_mill() {
             self.board().print();
-            let available_mills = self.board().available_mills(self.get_other_player_id());
-            let position = self.get_current_player_mut().mill(available_mills);
-            self.current_state.mill_piece(self.get_current_player_id(), position)
+            let available_mills = self.board()
+                .available_mills(self.get_current_player_id(), self.get_other_player_id());
+            let mill_ply = self.get_current_player_mut().mill(available_mills);
+            self.current_state.mill_piece(mill_ply)
         } else {
             self.current_state.clone()
         }

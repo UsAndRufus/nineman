@@ -1,5 +1,7 @@
 use std::fmt;
 
+use game::Ply;
+
 pub const WIN_SCORE: i8 = 7;
 pub const STARTING_SCORE: i8 = 0;
 pub const STARTING_PIECES: i8 = 9;
@@ -34,7 +36,7 @@ impl PlayerState {
         PlayerState { score: self.score + 1, pieces_left_to_place: self.pieces_left_to_place.clone() }
     }
 
-    pub fn has_won(&self, other_player_available_moves: Vec<(String,String)>,
+    pub fn has_won(&self, other_player_available_moves: Vec<Ply>,
                     other_player_placement: bool) -> bool {
 
         self.score >= WIN_SCORE ||

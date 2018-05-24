@@ -18,7 +18,6 @@ pub use self::builder::build;
 
 use game::switch_player_id;
 use game::Ply;
-use game::Ply::*;
 
 
 // Idea for a list of indices borrowed from here: https://rust-leipzig.github.io/architecture/2016/12/20/idiomatic-trees-in-rust/
@@ -50,20 +49,24 @@ impl Board {
     pub fn available_places(&self, player_id: i8) -> Vec<Ply> {
         self.positions.iter()
             .filter(|p| p.is_empty())
-            .map(|p| Placement{ player_id: player_id, piece_id: p.id.to_owned() })
+            .map(|p| Ply::Placement{ player_id: player_id, piece_id: p.id.to_owned() })
             .collect()
     }
 
-    // id is who is being milled, not who is doing the milling
-    pub fn available_mills(&self, id: i8) -> Vec<String> {
-        let all_positions: HashSet<String>
-            = self.positions.iter().filter(|p| p.owned_by(id)).map(|p| p.id.to_owned()).collect();
+    pub fn available_mills(&self, current_player_id: i8, opponent_id: i8) -> Vec<Ply> {
+        assert_eq!(current_player_id, switch_player_id(opponent_id));
+
+        let opponent_position_ids: HashSet<String>
+            = self.positions.iter()
+                .filter(|p| p.owned_by(opponent_id))
+                .map(|p| p.id.to_owned())
+                .collect();
 
         let mills;
-        match id {
+        match opponent_id {
             1 => mills = &self.p1_mills,
             2 => mills = &self.p2_mills,
-            _ => panic!("Unknown player {}", id),
+            _ => panic!("Unknown player {}", opponent_id),
         }
 
         let mut in_mills = HashSet::new();
@@ -74,13 +77,20 @@ impl Board {
         }
 
         let not_in_mills: Vec<String>
-            = all_positions.difference(&in_mills).map(|p| p.to_owned()).collect();
+            = opponent_position_ids
+                .difference(&in_mills)
+                .map(|p| p.to_owned())
+                .collect();
 
-        if not_in_mills.len() == 0 {
-            all_positions.into_iter().collect()
-        } else {
-            not_in_mills
-        }
+        // if not_in_mills.len() == 0 {
+        //     opponent_position_ids.into_iter().collect()
+        // } else {
+        //     not_in_mills
+        // }
+
+        not_in_mills.into_iter()
+            .map(|id| Ply::Mill { player_id: current_player_id, piece_id: id })
+            .collect()
     }
 
     pub fn available_moves(&self, player_id: i8) -> Vec<Ply> {
@@ -95,7 +105,7 @@ impl Board {
                 let connection = self.positions.get(*c).unwrap();
                 if connection.is_empty() {
                     let mv = (position.id.to_owned(), connection.id.to_owned());
-                    available_moves.push(Move { player_id: player_id, mv: mv });
+                    available_moves.push(Ply::Move { player_id: player_id, mv: mv });
                 }
             }
         }
@@ -109,8 +119,8 @@ impl Board {
     }
 
     pub fn move_piece(&mut self, move_ply: Ply) {
-        // TODO: make this compile lol
-        player_id: i8, from_id: String, to_id: String
+        let player_id = move_ply.player_id();
+        let (from_id, to_id) = move_ply.mv();
         let can_move;
         {
             let from = self.get_position(&from_id);
@@ -126,21 +136,25 @@ impl Board {
         }
     }
 
-    pub fn perform_mill(&mut self, id: String, from: i8) {
-        let available_mills = self.available_mills(switch_player_id(from));
-        let available_mills_other = self.available_mills(from);
+    pub fn perform_mill(&mut self, mill_ply: Ply) {
+        let id = mill_ply.piece_id();
+        let player_id = mill_ply.player_id();
+        let opponent_id = switch_player_id(player_id);
+
+        let available_mills = self.available_mills(player_id, opponent_id);
+        let available_mills_other = self.available_mills(opponent_id, player_id);
 
         {
             let position = self.get_mut_position(id);
-            if !position.is_empty() && !position.owned_by(from) {
+            if !position.is_empty() && !position.owned_by(player_id) {
                 position.remove();
             } else {
                 panic!("Invalid mill by player {}: {}; available_mills: {:?}, available_mills_other: {:?}",
-                            from, position.id, available_mills, available_mills_other);
+                            player_id, position.id, available_mills, available_mills_other);
             }
         }
 
-        self.validate_mills(from);
+        self.validate_mills(player_id);
     }
 
     fn validate_mills(&mut self, from: i8) {

@@ -25,7 +25,14 @@ impl Ply {
         match *self {
             Placement{piece_id, ..} => piece_id,
             Mill{piece_id, ..} => piece_id,
-            _ => panic!("Ply does not contain field piece_id"),
+            _ => panic!("Ply does not contain field piece_id!"),
+        }
+    }
+
+    pub fn mv(&self) -> (String, String) {
+        match *self {
+            Move{mv, ..} => mv,
+            _ => panic!("Ply is not a move!"),
         }
     }
 
