@@ -146,7 +146,6 @@ impl Game {
         switch_player_id(self.current_state.current_player_id)
     }
 
-    // TODO: shouldn't need to mutate player now
     pub fn get_player_mut(&mut self, player_id: i8) -> &mut Player {
         match player_id {
             1 => &mut self.player1,

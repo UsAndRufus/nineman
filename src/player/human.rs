@@ -51,7 +51,10 @@ impl InputHandler for Human {
     fn get_move(&mut self, available_moves: Vec<Ply>) -> Ply {
         loop {
             println!("Available moves: {:?}", available_moves);
-            match self.get_input().split(",").map(|m| m.to_string()).next_tuple() {
+            match self.get_input()
+                .split(",")
+                .map(|m| m.trim().to_string())
+                .next_tuple() {
                 Some(input) => {
                     let mv = self.move_ply(input);
                     if available_moves.contains(&mv) {
