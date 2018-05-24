@@ -8,7 +8,7 @@ use nineman::player::Random;
 fn main() {
     let p1 = Player::new(String::from("Dave"), 1, Box::new(Human {player_id: 1}));
 
-    let p2 = Player::new(String::from("Bertie"), 2, Box::new(Random {}));
+    let p2 = Player::new(String::from("Bertie"), 2, Box::new(Human {player_id: 2}));
 
     let mut game = Game::new(p1, p2);
 
