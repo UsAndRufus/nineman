@@ -47,8 +47,8 @@ impl GameState {
         // Could make all these calls to self.current_player_id just be in the methods?
         match self.next_ply {
             Placement{..} =>
-                    self.board.available_places().into_iter()
-                        .map(|p| self.place_piece(self.current_player_id, p)).collect(),
+                    self.board.available_places(self.current_player_id).into_iter()
+                        .map(|p| self.place_piece(p)).collect(),
             Move{..} =>
                     self.board.available_moves(self.current_player_id).into_iter()
                         .map(|m| self.move_piece(self.current_player_id, m)).collect(),
@@ -59,11 +59,13 @@ impl GameState {
         }
     }
 
-    pub fn place_piece(&self, player_id: i8, piece_id: String) -> GameState {
+    pub fn place_piece(&self, placement_ply: Ply) -> GameState {
         let mut game_state = self.clone();
 
-        game_state.board.place_piece(player_id, piece_id.to_owned());
-        game_state.ply_to_get_here = Placement {player_id, piece_id};
+        game_state.board.place_piece(placement_ply);
+        game_state.ply_to_get_here = placement_ply;
+
+        let player_id = placement_ply.player_id();
 
         let new_player_state = game_state.player_state(player_id).place_piece();
         game_state.update_player_state(player_id, new_player_state);

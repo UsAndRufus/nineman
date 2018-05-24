@@ -17,6 +17,8 @@ use self::mill::Mill;
 pub use self::builder::build;
 
 use game::switch_player_id;
+use game::Ply;
+use game::Ply::*;
 
 
 // Idea for a list of indices borrowed from here: https://rust-leipzig.github.io/architecture/2016/12/20/idiomatic-trees-in-rust/
@@ -45,8 +47,11 @@ impl Board {
         return self.add_position(Position::blank(id));
     }
 
-    pub fn available_places(&self) -> Vec<String> {
-        self.positions.iter().filter(|p| p.is_empty()).map(|p| p.id.to_owned()).collect()
+    pub fn available_places(&self, player_id: i8) -> Vec<Ply> {
+        self.positions.iter()
+            .filter(|p| p.is_empty())
+            .map(|p| Placement{ player_id: player_id, piece_id: p.id.to_owned() })
+            .collect()
     }
 
     // id is who is being milled, not who is doing the milling
@@ -94,10 +99,9 @@ impl Board {
         available_moves
     }
 
-    // Maybe take Plys as parameters for actions?
-    pub fn place_piece(&mut self, player_id: i8, piece_id: String) {
-        let position = self.get_mut_position(piece_id);
-        position.place(player_id);
+    pub fn place_piece(&mut self, placement_ply: Ply) {
+        let position = self.get_mut_position(placement_ply.piece_id());
+        position.place(placement_ply.player_id());
     }
 
     pub fn move_piece(&mut self, player_id: i8, from_id: String, to_id: String) {

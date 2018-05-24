@@ -11,6 +11,7 @@ pub use self::random::Random;
 pub use self::player_state::PlayerState;
 
 use game::GameState;
+use game::Ply;
 
 pub struct Player {
     pub name: String,
@@ -23,7 +24,7 @@ impl Player {
         Player { name: name, id: id, input_handler: input_handler }
     }
 
-    pub fn mill(&mut self, available_mills: Vec<String>) -> String {
+    pub fn mill(&mut self, available_mills: Vec<Ply>) -> Ply {
         self.input_handler.get_mill(available_mills)
     }
 
@@ -36,12 +37,12 @@ impl Player {
     }
 
     // NB used to be assert!(!self.is_placement()) before PlayerState
-    pub fn get_move(&mut self, available_moves: Vec<(String, String)>) -> (String, String) {
+    pub fn get_move(&mut self, available_moves: Vec<Ply>) -> Ply {
         self.input_handler.get_move(available_moves)
     }
 
     // NB used to be assert!(!self.is_placement()) before PlayerState
-    pub fn get_placement(&mut self, available_places: Vec<String>) -> String {
+    pub fn get_placement(&mut self, available_places: Vec<Ply>) -> Ply {
         self.input_handler.get_placement(available_places)
     }
 }

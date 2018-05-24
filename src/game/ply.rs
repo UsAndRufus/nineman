@@ -21,6 +21,14 @@ impl Ply {
         }
     }
 
+    pub fn piece_id(&self) -> String {
+        match *self {
+            Placement{piece_id, ..} => piece_id,
+            Mill{piece_id, ..} => piece_id,
+            _ => panic!("Ply does not contain field piece_id"),
+        }
+    }
+
     pub fn is_mill(&self) -> bool {
         match *self {
             Mill{..} => true,

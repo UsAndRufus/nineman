@@ -119,7 +119,7 @@ impl Game {
     }
 
     fn get_placement(&mut self) -> String {
-        let available_places = self.board().available_places();
+        let available_places = self.board().available_places(self.get_current_player_id());
 
         let player = self.get_current_player_mut();
 
