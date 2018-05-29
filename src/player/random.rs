@@ -4,7 +4,9 @@ use game::GameState;
 use game::Ply;
 use player::InputHandler;
 
-pub struct Random {}
+pub struct Random {
+    pub player_id: i8,
+}
 
 impl InputHandler for Random {
     fn give_new_game_state(&mut self, _game_state: GameState) {
@@ -37,7 +39,7 @@ impl InputHandler for Random {
         "Random InputHandler".to_string()
     }
 
-    fn set_player_id(&mut self, _player_id: i8) {
-        // Don't need to do anything
+    fn set_player_id(&mut self, player_id: i8) {
+        self.player_id = player_id;
     }
 }

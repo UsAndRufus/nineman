@@ -32,13 +32,28 @@ impl GameState {
         }
     }
 
+    // refactor or get rid
     pub fn last_player_has_won(&self) -> bool {
-        let new_player_state = self.current_player_state();
-        let last_player_state = self.other_player_state();
+        self.player_has_won(switch_player_id(self.current_player_id))
+    }
 
-        last_player_state.has_won(
-                self.board.available_moves(self.current_player_id), // moves for new/current player
-                new_player_state.is_placement())
+    pub fn winner(&self) -> Option<i8> {
+        for player_id in 1..2 {
+            if self.player_has_won(player_id) {
+                return Some(player_id);
+            }
+        }
+
+        None
+    }
+
+    pub fn player_has_won(&self, player_id: i8) -> bool {
+        let player_state = self.player_state(player_id);
+        let opponent_state = self.player_state(switch_player_id(player_id));
+
+        player_state.has_won(
+                self.board.available_moves(player_id),
+                opponent_state.is_placement())
     }
 
     pub fn children(&self) -> Vec<GameState> {
